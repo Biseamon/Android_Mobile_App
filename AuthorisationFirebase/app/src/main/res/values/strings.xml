@@ -34,5 +34,6 @@
     <string name="restaurant">Restaurant</string>
     <string name="bar1">Bar</string>
     <string name="atm">ATM</string>
+    <string name="generate_routes">Generate routes</string>
 
 </resources>
