@@ -1,0 +1,8 @@
+<root>
+    <item
+        name='com.google.maps.GeoApiContext com.google.maps.PendingResult&lt;T&gt; get(com.google.maps.internal.ApiConfig, java.lang.Class&lt;? extends R&gt;, java.util.Map&lt;java.lang.String,java.util.List&lt;java.lang.String&gt;&gt;)'>
+        <annotation name='org.jetbrains.annotations.Contract'>
+            <val name="pure" val="true" />
+        </annotation>
+    </item>
+</root>

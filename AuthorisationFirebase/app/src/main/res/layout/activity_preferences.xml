@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:id="@+id/preferenceList"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF2F2"
+    tools:context=".Preferences">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:text="@string/choose_your_preferences"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:textColor="#000000"
+        android:textSize="26sp"
+        android:paddingBottom="100dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="@string/restaurant"
+            android:layout_gravity="center"
+            android:textColor="#000000"
+            android:textSize="25sp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/restaurants"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="@string/atm"
+            android:layout_gravity="center"
+            android:textColor="#000000"
+            android:textSize="25sp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/atm"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="@string/bar1"
+            android:layout_gravity="center"
+            android:textColor="#000000"
+            android:textSize="25sp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/bars"/>
+
+
+                 <Spinner
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="25dp"
+                    android:id="@+id/list_item2"
+                    android:entries="@array/optionalParameters2"
+                     android:layout_marginBottom="5dp"/>
+
+                <Spinner
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="25dp"
+                    android:id="@+id/list_item1"
+                    android:entries="@array/optionalParameters2"
+                    android:layout_marginBottom="20dp"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:id="@+id/saveButton"
+                    android:text="@string/save"
+                    android:textSize="30sp"
+                    android:background="@color/colorPrimary"
+                    android:layout_marginBottom="10dp"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:id="@+id/button_continue"
+                    android:text="@string/cont_btn"
+                    android:textSize="30sp"
+                    android:background="@color/colorPrimary"/>
+
+    </LinearLayout>
+
+
