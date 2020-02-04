@@ -9,6 +9,15 @@
     android:background="#FFF2F2"
     tools:context=".Preferences">
 
+    <ScrollView
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:orientation="vertical">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -88,6 +97,9 @@
                     android:text="@string/cont_btn"
                     android:textSize="30sp"
                     android:background="@color/colorPrimary"/>
+        </LinearLayout>
+
+    </ScrollView>
 
     </LinearLayout>
 
