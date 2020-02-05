@@ -12,6 +12,26 @@ import java.util.List;
 
 public class Parser {
 
+    private HashMap<String,String> getDuration(JSONArray googleDirectionsJson){
+        HashMap<String, String> googleDirections = new HashMap<>();
+        String duration = "";
+        String distance = "";
+
+        try {
+
+            duration = googleDirectionsJson.getJSONObject(0).getJSONObject("duration").getString("text");
+            distance = googleDirectionsJson.getJSONObject(0).getJSONObject("distance").getString("text");
+
+            googleDirections.put("duration", duration);
+            googleDirections.put("distance", distance);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return googleDirections;
+    }
+
     private HashMap<String, String> getPlace(JSONObject googlePlaceJson)
     {
         HashMap<String, String> googlePlaceMap = new HashMap<>();
@@ -83,6 +103,48 @@ public class Parser {
             e.printStackTrace();
         }
         return getPlaces(jsonArray);
+    }
+
+    public String[] parseDirections(String jsonData){
+
+        JSONArray jsonArray = null;
+        JSONObject jsonObject;
+
+        try {
+            jsonObject = new JSONObject(jsonData);
+
+            jsonArray = jsonObject.getJSONArray("routes").getJSONObject(0)
+                    .getJSONArray("legs")
+                    .getJSONObject(0)
+                    .getJSONArray("steps");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return getPaths(jsonArray);
+
+    }
+
+    private String[] getPaths(JSONArray jsonArray) {
+
+        int count = jsonArray.length();
+        String[] polyLines = new String[count];
+
+        for (int i = 0; i < count; i++) {
+            try {
+                polyLines[i] = getPath(jsonArray.getJSONObject(i));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return polyLines;
+    }
+
+    private String getPath(JSONObject jsonObject) throws JSONException {
+
+        String polyLine = jsonObject.getJSONObject("polyline").getString("points");
+        return polyLine;
     }
 
 }
