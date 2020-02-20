@@ -35,7 +35,6 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
         this.textView = txtView;
     }
 
-
     @Override
     protected String doInBackground(Object... objects) {
 
@@ -88,7 +87,6 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
     protected void onPostExecute(String s) {
 
         parseDirection(s);
-        getDistanceAndDuration(s);
 
         Log.i("test", "onPostExecute: " + s);
     }
@@ -105,6 +103,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
         List<Integer> durationList = new ArrayList<>();
         List<Integer> distanceList = new ArrayList<>();
+        String distanceAndDuration;
 
         LatLng end_latLng,start_latLng;
 
@@ -113,12 +112,17 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
         String point;
 
+        long startTimeDistance;
+        long endTimeDistance;
+        long durationMillis;
+
         try {
             JSONObject json = new JSONObject(s);
             JSONArray jsonRoute = json.getJSONArray("routes");
 
             int count = jsonRoute.length();
 
+            startTimeDistance = System.currentTimeMillis();
             for (int i = 0; i < count; i++) {
 
                 JSONObject jsonObject = jsonRoute.getJSONObject(i);
@@ -158,6 +162,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
             polylineOptions.color(Color.RED);
             polylineOptions.width(10);
             polylineOptions.geodesic(true);
+            polylineOptions.clickable(true);
             polylineOptions.addAll(movements);
 
             mMap.clear();
@@ -181,77 +186,21 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
             double distanceSum = 0;
             double durationSum = 0;
 
+
             for (int i = 0; i < distanceList.size(); i++) {
                 distanceSum = distanceSum + (distanceList.get(i))/1000;
+
             }
 
             for (int i = 0; i < durationList.size(); i++) {
                 durationSum = durationSum + (durationList.get(i)%3600)/60;
             }
+            endTimeDistance = System.currentTimeMillis();
 
-            Log.i("parser", "parseDirect: " + distanceSum + " km" + "\n" + durationSum + " min");
+            durationMillis = endTimeDistance - startTimeDistance;
 
-        } catch (JSONException e) {
-            Log.d("error1", "prs: " + e);
-        }
-
-    }
-
-    public void getDistanceAndDuration(String jsonData){
-
-        int distance;
-        int duration;
-
-        String distanceAndDuration = "";
-
-        List<Integer> durationList = new ArrayList<>();
-        List<Integer> distanceList = new ArrayList<>();
-
-        try {
-            JSONObject json = new JSONObject(jsonData);
-            JSONArray jsonRoute = json.getJSONArray("routes");
-
-            int count = jsonRoute.length();
-
-            for (int i = 0; i < count; i++) {
-
-                JSONObject jsonObject = jsonRoute.getJSONObject(i);
-                JSONArray jsonArray = jsonObject.getJSONArray("legs");
-                int count1 = jsonArray.length();
-
-                for (int j = 0; j < count1; j++) {
-
-                    JSONObject jsonObject1 =jsonArray.getJSONObject(j);
-                    JSONArray jsonArray1 = jsonObject1.getJSONArray("steps");
-                    int count2 = jsonArray1.length();
-
-                    for (int k = 0; k < count2; k++) {
-                        JSONObject jsonObject2 = jsonArray1.getJSONObject(k);
-
-                        duration = Integer.parseInt(jsonObject2.getJSONObject("duration").getString("value"));
-                        distance = Integer.parseInt(jsonObject2.getJSONObject("distance").getString("value"));
-                        durationList.add(duration);
-                        distanceList.add(distance);
-
-
-                    }
-                }
-            }
-
-            double distanceSum = 0;
-            double durationSum = 0;
-
-            for (int i = 0; i < distanceList.size(); i++) {
-                distanceSum = distanceSum + (distanceList.get(i))/1000;
-            }
-
-            for (int i = 0; i < durationList.size(); i++) {
-                durationSum = durationSum + (durationList.get(i)%3600)/60;
-            }
-
-            Log.i("parser", "parseDirect: " + distanceSum + " km" + "\n" + durationSum + " min");
-
-            distanceAndDuration = distanceSum +" km" + " " + durationSum + " min";
+            Log.i("parser", "parseDirect: " + distanceSum + " km "  + "\n" + durationSum + " min " + "\n" + durationMillis + " ms");
+            distanceAndDuration = distanceSum +" km " + "\n" + durationSum + " min " + "\n"  + durationMillis + " ms";
             updateTxt(distanceAndDuration);
 
         } catch (JSONException e) {
