@@ -83,8 +83,6 @@ public class Preferences extends AppCompatActivity {
            }
        });
 
-
-
         button.setOnClickListener(v -> {
 
             Spinner spinner1 = findViewById(R.id.list_item2);
@@ -98,6 +96,9 @@ public class Preferences extends AppCompatActivity {
 
             userId = firebaseAuth.getCurrentUser().getUid();
             DocumentReference documentReference = fireStore.collection("Preferences").document(userId);
+
+            Toast.makeText(Preferences.this, "Successfully added preferences: " +
+                    selectedPlaces.toString(), Toast.LENGTH_LONG).show();
 
             documentReference.set(selectedPlaces).addOnSuccessListener(aVoid -> Log.d(TAG, "onSuccess: user Profile is created for "+ userId)).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -113,5 +114,7 @@ public class Preferences extends AppCompatActivity {
         });
 
     }
+
+
 
 }

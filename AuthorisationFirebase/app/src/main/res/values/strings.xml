@@ -35,5 +35,8 @@
     <string name="bar1">Bar</string>
     <string name="atm">ATM</string>
     <string name="generate_routes">Generate routes</string>
+    <string name="ga">GA</string>
+    <string name="geneticAlgorithm">GA</string>
+    <string name="here">here</string>
 
 </resources>

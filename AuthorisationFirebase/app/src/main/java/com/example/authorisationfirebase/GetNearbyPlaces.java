@@ -10,8 +10,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class GetNearbyPlaces extends AsyncTask<Object, String, String> {
 
@@ -37,28 +37,30 @@ class GetNearbyPlaces extends AsyncTask<Object, String, String> {
     @Override
     protected void onPostExecute(String s){
 
-        List<HashMap<String, String>> nearbyPlaceList;
+        List<Map<String, String>> nearbyPlaceList;
         Parser parser = new Parser();
         nearbyPlaceList = parser.parse(s);
-        Log.d("nearbyplacesdata","called parse method");
+        Log.d("nearbyplacesdata",nearbyPlaceList.toString());
         showNearbyPlaces(nearbyPlaceList);
     }
 
-    private void showNearbyPlaces(List<HashMap<String, String>> nearbyPlaceList)
+    private void showNearbyPlaces(List<Map<String, String>> nearbyPlaceList)
     {
         for(int i = 0; i < nearbyPlaceList.size(); i++)
         {
             MarkerOptions markerOptions = new MarkerOptions();
-            HashMap<String, String> googlePlace = nearbyPlaceList.get(i);
+            Map<String, String> googlePlace = nearbyPlaceList.get(i);
 
             String placeName = googlePlace.get("place_name");
             String vicinity = googlePlace.get("vicinity");
             double lat = Double.parseDouble( googlePlace.get("lat"));
             double lng = Double.parseDouble( googlePlace.get("lng"));
+            String place_id = googlePlace.get("place_id");
 
             LatLng latLng = new LatLng( lat, lng);
+
             markerOptions.position(latLng);
-            markerOptions.title(placeName + " : "+ vicinity + latLng);
+            markerOptions.title(placeName + " : "+ place_id + latLng + vicinity);
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 
             mMap.addMarker(markerOptions);

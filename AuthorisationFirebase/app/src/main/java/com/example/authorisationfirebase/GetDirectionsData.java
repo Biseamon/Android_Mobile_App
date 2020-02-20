@@ -2,63 +2,307 @@ package com.example.authorisationfirebase;
 
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
-import com.google.maps.model.LatLng;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-public class GetDirectionsData extends AsyncTask<Object,String, String> {
-
+public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
     GoogleMap mMap;
     String url;
+    String url1;
     String googleDirectionsData;
-    String duration, distance;
-    LatLng latLng;
+    String distUrl;
+    List<Map<String, String>> list;
+    TextView textView;
+
+    GetDirectionsData(TextView txtView){
+        this.textView = txtView;
+    }
+
 
     @Override
-    protected String doInBackground(Object[] objects) {
+    protected String doInBackground(Object... objects) {
 
         mMap = (GoogleMap) objects[0];
         url = (String) objects[1];
-        latLng = (LatLng) objects[2];
-
 
         DownloadUrl downloadUrl = new DownloadUrl();
         try {
             googleDirectionsData = downloadUrl.readUrl(url);
-        } catch (IOException e) {
+            Parser parser = new Parser();
+
+            List<Map<String, String>> trueUrl;
+
+            trueUrl = parser.parseTest(googleDirectionsData);
+
+            String origin = trueUrl.get(0).toString()
+                    .replace("{", "")
+                    .replace("}","")
+                    .replace("=", ":");
+
+            String destination = trueUrl.get(0).toString()
+                    .replace("{", "")
+                    .replace("}","")
+                    .replace("=", ":");
+
+            distUrl = getDistanceUrl(origin,destination,getPlacesId(trueUrl));
+
+            Parser parser1 = new Parser();
+            DownloadUrl downloadUrl1 = new DownloadUrl();
+            String distObj = distUrl;
+            url1 = "";
+            try {
+                url1 = downloadUrl1.readUrl(distObj);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            list = parser1.parseTesting(url1);
+
+            Log.i("outerUrl", "onClick: " + distUrl + " " + trueUrl.get(0).toString());
+        } catch (IOException | RuntimeException e) {
+            Log.d("error", "doInBackground: " + e);
             e.printStackTrace();
         }
 
-        return googleDirectionsData;
+        return url1;
     }
 
     @Override
     protected void onPostExecute(String s) {
-        String[] directionList;
-        Parser parser = new Parser();
-        directionList = parser.parseDirections(s);
-        displayDirection(directionList);
+
+        parseDirection(s);
+        getDistanceAndDuration(s);
+
+        Log.i("test", "onPostExecute: " + s);
     }
 
-    private void displayDirection(String[] directionList) {
+    public void parseDirection(String s){
+        PolylineOptions polylineOptions = new PolylineOptions();
+        List<LatLng> movements = new ArrayList<>();
 
-        int count = directionList.length;
+        Double end_lat,end_lng;
+        Double start_lat,start_lng;
 
-        for (int i = 0; i < count; i++){
-            PolylineOptions options = new PolylineOptions();
-            options.color(Color.CYAN);
-            options.width(10);
-            options.addAll(PolyUtil.decode(directionList[i]));
+        int distance;
+        int duration;
 
-            mMap.addPolyline(options);
+        List<Integer> durationList = new ArrayList<>();
+        List<Integer> distanceList = new ArrayList<>();
+
+        LatLng end_latLng,start_latLng;
+
+        List<LatLng> end_LatLng_list = new ArrayList<>();
+        List<LatLng> start_LatLng_list = new ArrayList<>();
+
+        String point;
+
+        try {
+            JSONObject json = new JSONObject(s);
+            JSONArray jsonRoute = json.getJSONArray("routes");
+
+            int count = jsonRoute.length();
+
+            for (int i = 0; i < count; i++) {
+
+                JSONObject jsonObject = jsonRoute.getJSONObject(i);
+                JSONArray jsonArray = jsonObject.getJSONArray("legs");
+                int count1 = jsonArray.length();
+
+                for (int j = 0; j < count1; j++) {
+
+                    JSONObject jsonObject1 =jsonArray.getJSONObject(j);
+                    JSONArray jsonArray1 = jsonObject1.getJSONArray("steps");
+                    int count2 = jsonArray1.length();
+
+                    for (int k = 0; k < count2; k++) {
+                        JSONObject jsonObject2 = jsonArray1.getJSONObject(k);
+                        point = jsonObject2.getJSONObject("polyline").getString("points");
+
+                        end_lat = Double.parseDouble(jsonArray1.getJSONObject(i).getJSONObject("end_location").getString("lat"));
+                        end_lng = Double.parseDouble(jsonArray1.getJSONObject(i).optJSONObject("end_location").getString("lng"));
+                        start_lat = Double.parseDouble(jsonArray1.getJSONObject(i).getJSONObject("start_location").getString("lat"));
+                        start_lng = Double.parseDouble(jsonArray1.getJSONObject(i).getJSONObject("start_location").getString("lng"));
+
+                        end_latLng = new LatLng(end_lat, end_lng);
+                        start_latLng = new LatLng(start_lat, start_lng);
+                        end_LatLng_list.add(end_latLng);
+                        start_LatLng_list.add(start_latLng);
+
+                        duration = Integer.parseInt(jsonObject2.getJSONObject("duration").getString("value"));
+                        distance = Integer.parseInt(jsonObject2.getJSONObject("distance").getString("value"));
+                        durationList.add(duration);
+                        distanceList.add(distance);
+
+                        movements.addAll(PolyUtil.decode(point));
+                    }
+                }
+            }
+
+            polylineOptions.color(Color.RED);
+            polylineOptions.width(10);
+            polylineOptions.geodesic(true);
+            polylineOptions.addAll(movements);
+
+            mMap.clear();
+            mMap.addPolyline(polylineOptions);
+
+
+            for (int i = 0; i < end_LatLng_list.size(); i++) {
+                LatLng latLng = end_LatLng_list.get(i);
+                String name = end_LatLng_list.get(i).toString();
+                mMap.addMarker(new MarkerOptions().position(latLng).title("End_location " + name)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+            }
+
+            for (int j = 0; j < start_LatLng_list.size(); j++) {
+                LatLng latLng1 = start_LatLng_list.get(j);
+                String name = start_LatLng_list.get(j).toString();
+                mMap.addMarker(new MarkerOptions().position(latLng1).title("Start_location " + name)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+            }
+
+            double distanceSum = 0;
+            double durationSum = 0;
+
+            for (int i = 0; i < distanceList.size(); i++) {
+                distanceSum = distanceSum + (distanceList.get(i))/1000;
+            }
+
+            for (int i = 0; i < durationList.size(); i++) {
+                durationSum = durationSum + (durationList.get(i)%3600)/60;
+            }
+
+            Log.i("parser", "parseDirect: " + distanceSum + " km" + "\n" + durationSum + " min");
+
+        } catch (JSONException e) {
+            Log.d("error1", "prs: " + e);
         }
 
     }
 
+    public void getDistanceAndDuration(String jsonData){
 
+        int distance;
+        int duration;
+
+        String distanceAndDuration = "";
+
+        List<Integer> durationList = new ArrayList<>();
+        List<Integer> distanceList = new ArrayList<>();
+
+        try {
+            JSONObject json = new JSONObject(jsonData);
+            JSONArray jsonRoute = json.getJSONArray("routes");
+
+            int count = jsonRoute.length();
+
+            for (int i = 0; i < count; i++) {
+
+                JSONObject jsonObject = jsonRoute.getJSONObject(i);
+                JSONArray jsonArray = jsonObject.getJSONArray("legs");
+                int count1 = jsonArray.length();
+
+                for (int j = 0; j < count1; j++) {
+
+                    JSONObject jsonObject1 =jsonArray.getJSONObject(j);
+                    JSONArray jsonArray1 = jsonObject1.getJSONArray("steps");
+                    int count2 = jsonArray1.length();
+
+                    for (int k = 0; k < count2; k++) {
+                        JSONObject jsonObject2 = jsonArray1.getJSONObject(k);
+
+                        duration = Integer.parseInt(jsonObject2.getJSONObject("duration").getString("value"));
+                        distance = Integer.parseInt(jsonObject2.getJSONObject("distance").getString("value"));
+                        durationList.add(duration);
+                        distanceList.add(distance);
+
+
+                    }
+                }
+            }
+
+            double distanceSum = 0;
+            double durationSum = 0;
+
+            for (int i = 0; i < distanceList.size(); i++) {
+                distanceSum = distanceSum + (distanceList.get(i))/1000;
+            }
+
+            for (int i = 0; i < durationList.size(); i++) {
+                durationSum = durationSum + (durationList.get(i)%3600)/60;
+            }
+
+            Log.i("parser", "parseDirect: " + distanceSum + " km" + "\n" + durationSum + " min");
+
+            distanceAndDuration = distanceSum +" km" + " " + durationSum + " min";
+            updateTxt(distanceAndDuration);
+
+        } catch (JSONException e) {
+            Log.d("error1", "prs: " + e);
+        }
+
+    }
+
+    public void updateTxt(String data){
+        textView.setText(data);
+    }
+
+    public String getDistanceUrl(String origin, String destination, String wayPoints){
+
+        String alt = "true";
+
+        StringBuilder stringBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
+        stringBuilder.append("origin=" + origin);
+        stringBuilder.append("&destination=" + destination);
+        stringBuilder.append("&alternatives=" + alt);
+        stringBuilder.append("&mode=" + "DRIVING");
+        stringBuilder.append("&waypoints=" + wayPoints);
+        stringBuilder.append("&key=" + "AIzaSyCuRGuOxVFfA2rs5gT-w2Y8K_RSlgzualg");
+
+        return stringBuilder.toString();
+    }
+
+    public String getPlacesId(List<Map<String, String>> placesIds){
+
+        List<Map<String,String>> placesIdList = new ArrayList<>();
+
+        for (int i = 0; i < placesIds.size(); i++) {
+
+            placesIdList.add(placesIds.get(i));
+
+            Log.i("theList2", placesIdList.toString()
+                    .replace("=",":")
+                    .replace("{","")
+                    .replace("}","")+ "|");
+        }
+
+        return placesIdList.toString().replace("[", "")
+                .replace("]", "")
+                .replace("{", "")
+                .replace("}", "")
+                .replace("=", ":")
+                .replace(" ", "")
+                .replace(",", "|");
+    }
 }
+
+
+
+

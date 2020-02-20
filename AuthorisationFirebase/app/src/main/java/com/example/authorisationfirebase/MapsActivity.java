@@ -5,6 +5,9 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -28,16 +31,21 @@ import androidx.fragment.app.FragmentActivity;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback{
 
     private static final String TAG = "TAG";
     private Map<String, Object> listOfPreferences;
-
     private GoogleMap mMap;
     private FirebaseFirestore fireStore;
     private FirebaseAuth firebaseAuth;
     private String signIn;
     private FusedLocationProviderClient fusedLocationProviderClient;
+
+    TextView distDuration;
+
+    private Button generateRoute;
+    private Double lat;
+    private Double lng;
 
 
     @Override
@@ -61,6 +69,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         firebaseAuth = FirebaseAuth.getInstance();
         fireStore = FirebaseFirestore.getInstance();
         signIn = firebaseAuth.getCurrentUser().getUid();
+
+        distDuration = findViewById(R.id.distDur);
+
+        generateRoute = findViewById(R.id.generate);
 
          getDocument();
 
@@ -99,15 +111,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void  onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, location -> {
-            Double lat = location.getLatitude();
-            Double lng = location.getLongitude();
+            lat = location.getLatitude();
+            lng = location.getLongitude();
             LatLng currentLoc = new LatLng(lat, lng);
 
             GetNearbyPlaces getNearbyPlaces = new GetNearbyPlaces();
-            Object dataTransfer[] = new Object[3];
+
+            Object dataTransfer[] = new Object[2];
 
             Object placeType = listOfPreferences.get("PlaceType");
             Object minPrice =  listOfPreferences.get("PlaceMinPrice");
@@ -127,14 +140,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             getNearbyPlaces.execute(dataTransfer);
 
-////            String destinationUrl = getDistanceUrl(lat, lng, 52.4527099, -1.8784664);
-////            dataTransfer[2] = destinationUrl;
-//
-//            Log.i("DISTANCE", destinationUrl);
+
+            /**
+             * Click on that button to generate a route between current place and nearby places.
+             */
+            generateRoute.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    GetDirectionsData getDirectionsData = new GetDirectionsData(distDuration);
+
+                    Object dataTransfer[] = new Object[3];
+
+                    dataTransfer[0] = mMap;
+                    dataTransfer[1] = url;
+
+                    getDirectionsData.execute(dataTransfer);
+
+                    lat = location.getLatitude();
+                    lng = location.getLongitude();
+                    LatLng currentLoc = new LatLng(lat, lng);
+
+                    final  String TAG1= "TAG1";
+                    Log.i(TAG1, placeType.toString() + " " + minPrice + maxPrice);
+
+                    mMap.clear();
+                    mMap.addMarker(new MarkerOptions().position(currentLoc).title("Current Location"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLoc));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 15));
+
+
+                    Toast.makeText(MapsActivity.this, "Directions between nearby place", Toast.LENGTH_LONG).show();
+                }
+            });
+
         });
     }
 
-    private String getUrl(double latitude , double longitude , String nearbyPlace, Object minPrice, Object maxPrice)
+    public String getUrl(double latitude , double longitude , String nearbyPlace, Object minPrice, Object maxPrice)
     {
 
         int placeRadius = 1000;
@@ -148,20 +191,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         googlePlaceUrl.append("&maxprice=" +maxPrice);
         googlePlaceUrl.append("&key="+"AIzaSyCuRGuOxVFfA2rs5gT-w2Y8K_RSlgzualg");
 
-        Log.d("MapsActivity", "url = "+googlePlaceUrl.toString());
+        Log.d("MapsActivity", "url = "+googlePlaceUrl);
 
         return googlePlaceUrl.toString();
     }
 
-    private String getDistanceUrl(Double longitude, Double latitude, Double latitude1, Double longitude1){
-
-        StringBuilder stringBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
-        stringBuilder.append("origin=" + latitude + "," + longitude);
-        stringBuilder.append("&destination=" + latitude1 + "," + longitude1);
-        //stringBuilder.append("&waypoints=" + wayPoint1 + "|" + wayPoint2 + "|" + wayPoint3 + "|" + wayPoint4 + "|" + wayPoint5);
-        stringBuilder.append("&key="+"AIzaSyCuRGuOxVFfA2rs5gT-w2Y8K_RSlgzualg");
-
-        return stringBuilder.toString();
-    }
 
 }

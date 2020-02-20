@@ -36,6 +36,7 @@ public class DownloadUrl {
             data = sb.toString();
             br.close();
 
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
