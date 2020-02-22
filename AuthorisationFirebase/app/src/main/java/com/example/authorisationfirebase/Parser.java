@@ -160,59 +160,59 @@ public class Parser {
         return list;
     }
 
-    public List<Map<String, String>> parseDirections(String jsonData)
-    {
-        JSONArray jsonArray = null;
-        JSONObject jsonObject;
-
-        try {
-            jsonObject = new JSONObject(jsonData);
-                jsonArray = jsonObject.getJSONArray("routes").getJSONObject(0)
-                        .getJSONArray("legs").getJSONObject(0).getJSONArray("steps");
-                Log.i("jsonArr", "parseDirections: " + jsonArray.toString());
-        } catch (JSONException e) {
-            Log.d("parsedir", "getPaths: " + e);
-        }
-        return getPaths(jsonArray);
-    }
-
-    public List<Map<String,String>> getPaths(JSONArray googleStepsJson )
-    {
-        int count = googleStepsJson.length();
-        List<Map<String, String>> polylines = new ArrayList<>();
-        Map<String,String> placePoints;
-
-        for(int i = 0;i<count;i++)
-        {
-            try {
-                placePoints = getPath((JSONObject) googleStepsJson.get(i));
-                polylines.add(placePoints);
-
-                Log.i("getpaths", "getPaths: " + polylines.toString());
-            } catch (JSONException e) {
-                Log.d("getpaths", "getPaths: " + e);
-            }
-        }
-
-        return polylines;
-    }
-
-    public Map<String, String> getPath(JSONObject googlePathJson)
-    {
-        HashMap<String,String> polylines = new HashMap<>();
-        String polyline;
-
-        try {
-            if (!googlePathJson.isNull("polyline")) {
-                polyline = googlePathJson.getJSONObject("polyline").getString("points");
-                polylines.put("points", polyline);
-
-                Log.i("getpath", "getPath: " + polylines.toString());
-            }
-
-        } catch (JSONException e) {
-            Log.d("getpath", "getPaths: " + e);
-        }
-        return polylines;
-    }
+//    public List<Map<String, String>> parseDirections(String jsonData)
+//    {
+//        JSONArray jsonArray = null;
+//        JSONObject jsonObject;
+//
+//        try {
+//            jsonObject = new JSONObject(jsonData);
+//                jsonArray = jsonObject.getJSONArray("routes").getJSONObject(0)
+//                        .getJSONArray("legs").getJSONObject(0).getJSONArray("steps");
+//                Log.i("jsonArr", "parseDirections: " + jsonArray.toString());
+//        } catch (JSONException e) {
+//            Log.d("parsedir", "getPaths: " + e);
+//        }
+//        return getPaths(jsonArray);
+//    }
+//
+//    public List<Map<String,String>> getPaths(JSONArray googleStepsJson )
+//    {
+//        int count = googleStepsJson.length();
+//        List<Map<String, String>> polylines = new ArrayList<>();
+//        Map<String,String> placePoints;
+//
+//        for(int i = 0;i<count;i++)
+//        {
+//            try {
+//                placePoints = getPath((JSONObject) googleStepsJson.get(i));
+//                polylines.add(placePoints);
+//
+//                Log.i("getpaths", "getPaths: " + polylines.toString());
+//            } catch (JSONException e) {
+//                Log.d("getpaths", "getPaths: " + e);
+//            }
+//        }
+//
+//        return polylines;
+//    }
+//
+//    public Map<String, String> getPath(JSONObject googlePathJson)
+//    {
+//        HashMap<String,String> polylines = new HashMap<>();
+//        String polyline;
+//
+//        try {
+//            if (!googlePathJson.isNull("polyline")) {
+//                polyline = googlePathJson.getJSONObject("polyline").getString("points");
+//                polylines.put("points", polyline);
+//
+//                Log.i("getpath", "getPath: " + polylines.toString());
+//            }
+//
+//        } catch (JSONException e) {
+//            Log.d("getpath", "getPaths: " + e);
+//        }
+//        return polylines;
+//    }
 }

@@ -41,11 +41,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String signIn;
     private FusedLocationProviderClient fusedLocationProviderClient;
 
-    TextView distDuration;
+    private TextView distDuration;
 
     private Button generateRoute;
     private Double lat;
     private Double lng;
+
+    private Button geneticAlgorithm;
 
 
     @Override
@@ -56,7 +58,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.map);
                 mapFragment.getMapAsync(MapsActivity.this);
-
 
         if ((ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) &&
                 (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) !=
@@ -72,9 +73,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         distDuration = findViewById(R.id.distDur);
 
+        geneticAlgorithm = findViewById(R.id.geneticAlg);
+
         generateRoute = findViewById(R.id.generate);
 
+
+
          getDocument();
+         gaButtonOnClick();
 
     }
 
@@ -177,6 +183,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    public void gaButtonOnClick() {
+        geneticAlgorithm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                GetDistanceMatrixData getDistanceMatrixData = new GetDistanceMatrixData();
+                Object[] dataTransfer = new Object[2];
+
+                Object placeType = listOfPreferences.get("PlaceType");
+                Object minPrice =  listOfPreferences.get("PlaceMinPrice");
+                Object maxPrice =  listOfPreferences.get("PlaceMaxPrice");
+
+                String url = getUrl(lat, lng, (String) placeType, minPrice, maxPrice);
+                dataTransfer[0] = mMap;
+                dataTransfer[1] = url;
+
+                getDistanceMatrixData.execute(dataTransfer);
+
+                Log.i(TAG, "onClick: " + url);
+
+            }
+        });
+    }
+
+
     public String getUrl(double latitude , double longitude , String nearbyPlace, Object minPrice, Object maxPrice)
     {
 
@@ -195,6 +226,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         return googlePlaceUrl.toString();
     }
-
 
 }

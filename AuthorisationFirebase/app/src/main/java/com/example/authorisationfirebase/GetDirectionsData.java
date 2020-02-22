@@ -34,6 +34,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
     GetDirectionsData(TextView txtView){
         this.textView = txtView;
     }
+    GetDirectionsData(){ }
 
     @Override
     protected String doInBackground(Object... objects) {
@@ -74,6 +75,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
             list = parser1.parseTesting(url1);
 
+            Log.i("places", "places: " + url);
             Log.i("outerUrl", "onClick: " + distUrl + " " + trueUrl.get(0).toString());
         } catch (IOException | RuntimeException e) {
             Log.d("error", "doInBackground: " + e);
@@ -169,12 +171,12 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
             mMap.addPolyline(polylineOptions);
 
 
-            for (int i = 0; i < end_LatLng_list.size(); i++) {
-                LatLng latLng = end_LatLng_list.get(i);
-                String name = end_LatLng_list.get(i).toString();
-                mMap.addMarker(new MarkerOptions().position(latLng).title("End_location " + name)
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-            }
+//            for (int i = 0; i < end_LatLng_list.size(); i++) {
+//                LatLng latLng = end_LatLng_list.get(i);
+//                String name = end_LatLng_list.get(i).toString();
+//                mMap.addMarker(new MarkerOptions().position(latLng).title("End_location " + name)
+//                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+//            }
 
             for (int j = 0; j < start_LatLng_list.size(); j++) {
                 LatLng latLng1 = start_LatLng_list.get(j);
@@ -221,8 +223,8 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
         stringBuilder.append("origin=" + origin);
         stringBuilder.append("&destination=" + destination);
         stringBuilder.append("&alternatives=" + alt);
-        stringBuilder.append("&mode=" + "DRIVING");
-        stringBuilder.append("&waypoints=" + wayPoints);
+        stringBuilder.append("&mode=driving");
+        stringBuilder.append("&waypoints=optimize:true|" + wayPoints);
         stringBuilder.append("&key=" + "AIzaSyCuRGuOxVFfA2rs5gT-w2Y8K_RSlgzualg");
 
         return stringBuilder.toString();
