@@ -23,13 +23,13 @@ import java.util.Map;
 
 public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
-    GoogleMap mMap;
-    String url;
-    String url1;
-    String googleDirectionsData;
-    String distUrl;
-    List<Map<String, String>> list;
-    TextView textView;
+    private GoogleMap mMap;
+    private String url;
+    private String url1;
+    private String googleDirectionsData;
+    private String distUrl;
+    //List<Map<String, String>> list;
+    private TextView textView;
 
     GetDirectionsData(TextView txtView){
         this.textView = txtView;
@@ -63,7 +63,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
             distUrl = getDistanceUrl(origin,destination,getPlacesId(trueUrl));
 
-            Parser parser1 = new Parser();
+            //Parser parser1 = new Parser();
             DownloadUrl downloadUrl1 = new DownloadUrl();
             String distObj = distUrl;
             url1 = "";
@@ -73,7 +73,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
                 e.printStackTrace();
             }
 
-            list = parser1.parseTesting(url1);
+            //list = parser1.parseTesting(url1);
 
             Log.i("places", "places: " + url);
             Log.i("outerUrl", "onClick: " + distUrl + " " + trueUrl.get(0).toString());
@@ -182,7 +182,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
                 LatLng latLng1 = start_LatLng_list.get(j);
                 String name = start_LatLng_list.get(j).toString();
                 mMap.addMarker(new MarkerOptions().position(latLng1).title("Start_location " + name)
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
             }
 
             double distanceSum = 0;
@@ -234,7 +234,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
         List<Map<String,String>> placesIdList = new ArrayList<>();
 
-        for (int i = 0; i < placesIds.size(); i++) {
+        for (int i = 0; i < placesIds.size() - 10; i++) {
 
             placesIdList.add(placesIds.get(i));
 

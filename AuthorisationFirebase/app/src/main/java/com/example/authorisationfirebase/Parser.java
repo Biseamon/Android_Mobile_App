@@ -74,6 +74,7 @@ public class Parser {
             if (!placeIdObj.isNull("name")) {
                 placesIds = placeIdObj.getString("place_id");
             }
+
         }catch(JSONException e){
             Log.d("Error4 ",  "Error " + e);
         }
@@ -144,6 +145,7 @@ public class Parser {
         JSONArray jsonArray;
 
         List<Map<String, String>> list = new ArrayList<>();
+
         HashMap<String, String> hashMap = new HashMap<>();
 
         try {
@@ -155,6 +157,95 @@ public class Parser {
             hashMap.put("obj", polyline);
             list.add(hashMap);
         } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<String> parseOrigins(String jsonData){
+        List<String> list1 = new ArrayList<>();
+        try{
+            JSONObject jsonObject = new JSONObject(jsonData);
+
+            JSONArray origins = (JSONArray) jsonObject.get("origin_addresses");
+            for (int i = 0; i < origins.length(); i++) {
+                list1.add(origins.getString(i));
+            }
+
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        return list1;
+    }
+
+    public List<String> parseDestinations(String jsonData){
+        List<String> list1 = new ArrayList<>();
+        try{
+            JSONObject jsonObject = new JSONObject(jsonData);
+
+            JSONArray destinations = (JSONArray) jsonObject.get("destination_addresses");
+            for (int i = 0; i < destinations.length(); i++) {
+                list1.add(destinations.getString(i));
+            }
+
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        return list1;
+    }
+
+    public List<String> parseDistanceFromMatrix(String jsonData){
+
+        List<String> list = new ArrayList<>();
+
+        try{
+            JSONObject jsonObject = new JSONObject(jsonData);
+            JSONArray dist=(JSONArray)jsonObject.get("rows");
+
+            for (int i = 0; i < dist.length(); i++) {
+                JSONObject obj2 = (JSONObject)dist.get(i);
+                JSONArray dista = (JSONArray)obj2.get("elements");
+
+                for (int j = 0; j < dista.length(); j++) {
+                    JSONObject obj3 = (JSONObject)dista.get(j);
+
+                    JSONObject obj5=(JSONObject)obj3.get("distance");
+                    String distance = obj5.getString("text");
+                    list.add(distance);
+                }
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public List<String> parseDurationFromMatrix(String jsonData){
+
+        List<String> list = new ArrayList<>();
+
+        try{
+            JSONObject jsonObject = new JSONObject(jsonData);
+            JSONArray dist=(JSONArray)jsonObject.get("rows");
+
+            for (int i = 0; i < dist.length(); i++) {
+                JSONObject obj2 = (JSONObject)dist.get(i);
+                JSONArray dista = (JSONArray)obj2.get("elements");
+
+                for (int j = 0; j < dista.length(); j++) {
+                    JSONObject obj3 = (JSONObject)dista.get(j);
+
+                    JSONObject obj5=(JSONObject)obj3.get("duration");
+                    String duration = obj5.getString("text");
+                    list.add(duration);
+                }
+            }
+        }
+        catch(Exception e) {
             e.printStackTrace();
         }
         return list;
