@@ -28,7 +28,7 @@ public class Population {
      * @param chromosomeLength
      *            The length of the individuals chromosome
      */
-    public Population(int populationSize, int chromosomeLength) {
+    public Population(int populationSize, int chromosomeLength, int populationSize1, int chromosomeLength1) {
         // Initial population
         this.population = new Individual[populationSize];
 
@@ -38,6 +38,11 @@ public class Population {
             Individual individual = new Individual(chromosomeLength);
             // Add individual to population
             this.population[individualCount] = individual;
+        }
+
+        for (int i = 0; i < populationSize1; i++) {
+            Individual individual = new Individual(chromosomeLength1);
+            this.population[i] = individual;
         }
     }
 

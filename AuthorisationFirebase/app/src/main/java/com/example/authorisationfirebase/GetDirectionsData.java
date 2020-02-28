@@ -187,22 +187,29 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
             double distanceSum = 0;
             double durationSum = 0;
+            double distanceSumMeters = 0;
 
 
             for (int i = 0; i < distanceList.size(); i++) {
                 distanceSum = distanceSum + (distanceList.get(i))/1000;
+            }
 
+            for (int i = 0; i < distanceList.size(); i++) {
+                distanceSumMeters = distanceSumMeters + (distanceList.get(i));
             }
 
             for (int i = 0; i < durationList.size(); i++) {
                 durationSum = durationSum + (durationList.get(i)%3600)/60;
             }
+
             endTimeDistance = System.currentTimeMillis();
 
             durationMillis = endTimeDistance - startTimeDistance;
 
             Log.i("parser", "parseDirect: " + distanceSum + " km "  + "\n" + durationSum + " min " + "\n" + durationMillis + " ms");
-            distanceAndDuration = distanceSum +" km " + "\n" + durationSum + " min " + "\n"  + durationMillis + " ms";
+            distanceAndDuration = distanceSum +" km " + "\n" + distanceSumMeters + " m " + "\n" + durationSum +
+                    " min " + "\n"  + durationMillis + " ms";
+
             updateTxt(distanceAndDuration);
 
         } catch (JSONException e) {

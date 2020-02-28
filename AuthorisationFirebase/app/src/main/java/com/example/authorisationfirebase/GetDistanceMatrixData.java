@@ -48,6 +48,10 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
     public String distanceMatrixUrl;
     private String finalUrl;
 
+    private long startTimeDistance;
+    private long endTimeDistance;
+    private long durationMillis;
+
     public static int maxGenerations = 100;
 
     public GetDistanceMatrixData(){}
@@ -159,8 +163,11 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
 //        }
 
 // Create cities
-        int numCities = 10;
-        City cities[] = new City[numCities];
+        //int numCities = 10;
+        Distance distances[] = new Distance[po.size()];
+        Duration durations[] = new Duration[po.size()];
+
+        startTimeDistance = System.currentTimeMillis();
 
         for (int i = 0; i < distanceMatrix.length; i++) {
             for (int j = 0; j < distanceMatrix[i].length; j++) {
@@ -198,19 +205,10 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
                 int x = (int) Double.parseDouble(distanceMatrix[i][0]);
                 int y = (int) Double.parseDouble(distanceMatrix[0][j]);
 
-                cities[i] = new City(x,y);
+              distances[i] = new Distance(x,y);
             }
         }
 
-        // Loop to create random cities
-//        for (int cityIndex = 0; cityIndex < numCities; cityIndex++) {
-//            // Generate x,y position
-//            int xPos = (int) (100 * Math.random());
-//            int yPos = (int) (100 * Math.random());
-//
-//            // Add city
-//            cities[cityIndex] = new City(xPos, yPos);
-//        }
 
         for (int i = 0; i < durationMatrix.length; i++) {
             for (int j = 0; j < durationMatrix[i].length; j++) {
@@ -250,21 +248,21 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
                 int x = Integer.parseInt(durationMatrix[i][0]);
                 int y = Integer.parseInt(durationMatrix[0][j]);
 
-                   // cities[i] = new City(x,y);
+                    durations[i] = new Duration(x,y);
 
             }
         }
 
         // Initial GA
-        GeneticAlgorithm ga = new GeneticAlgorithm(100, 0.001, 0.9, 2, 5);
+        GeneticAlgorithm ga = new GeneticAlgorithm(100, 0.001, 0.9, 2, 10);
 
         // Initialize population
-        Population population = ga.initPopulation(cities.length);
+        Population population = (Population) ga.initPopulation(distances.length, durations.length);
 
         // Evaluate population
-        ga.evalPopulation(population, cities);
+        ga.evalPopulation(population, distances, durations);
 
-        Route startRoute = new Route(population.getFittest(0), cities);
+        Route startRoute = new Route(population.getFittest(0), distances, durations);
 
         Log.d("Start Distance: " , "" + startRoute.getDistance());
 
@@ -273,8 +271,8 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
         // Start evolution loop
         while (ga.isTerminationConditionMet(generation, maxGenerations) == false) {
             // Print fittest individual from population
-            Route route = new Route(population.getFittest(0), cities);
-            System.out.println("G"+generation+" Best distance: " + route.getDistance());
+            Route route = new Route(population.getFittest(0), distances, durations);
+            System.out.println("G"+generation+" Distance and duration: " + route.getDistance() + " km " + route.getDuration() + " min");
 
             // Apply crossover
             population = ga.crossoverPopulation(population);
@@ -283,22 +281,23 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
             population = ga.mutatePopulation(population);
 
             // Evaluate population
-            ga.evalPopulation(population, cities);
+            ga.evalPopulation(population, distances, durations);
 
             // Increment the current generation
             generation++;
         }
 
-        Log.d("Stopped after ",  maxGenerations + " generations.");
+        Route route = new Route(population.getFittest(0), distances,durations);
 
-        Route route = new Route(population.getFittest(0), cities);
+        endTimeDistance = System.currentTimeMillis();
 
-        Log.d("Best distance: ", "" + route.getDistance());
+        durationMillis = endTimeDistance - startTimeDistance;
 
+        Log.d("Distance&Duration: ", "distance " + route.getDistance() + " km" + " and duration " + route.getDuration() + " min"
+                                                            + " " + durationMillis + " ms" +
+                "Stopped after " + maxGenerations + " generations."   );
 
-        Log.d("matrix", "onPostExecute: " + getAllDistancesAndDurations());
-        Log.d("matrix", "onPostExecute: " + durationMatrix[4][3]
-                + " " + distanceMatrix[4][3] + " " + getDistances());
+        System.out.print(getAllDistancesAndDurations());
 
     }
 

@@ -27,9 +27,11 @@ public class GeneticAlgorithm {
      * @param chromosomeLength The length of the individuals chromosome
      * @return population The initial population generated
      */
-    public Population initPopulation(int chromosomeLength){
+    public Population initPopulation(int chromosomeLength, int chromosomeLength1){
         // Initialize population
-        Population population = new Population(this.populationSize, chromosomeLength);
+        Population population = new Population(this.populationSize, chromosomeLength,
+                                               this.populationSize, chromosomeLength1);
+
         return population;
     }
 
@@ -60,9 +62,9 @@ public class GeneticAlgorithm {
      *            the cities being referenced
      * @return double The fitness value for individual
      */
-    public double calcFitness(Individual individual, City cities[]){
+    public double calcFitness(Individual individual, Distance cities[], Duration duration[]){
         // Get fitness
-        Route route = new Route(individual, cities);
+        Route route = new Route(individual, cities, duration);
         double fitness = 1 / route.getDistance();
 
         // Store fitness
@@ -77,12 +79,12 @@ public class GeneticAlgorithm {
      * @param population the population to evaluate
      * @param cities the cities being referenced
      */
-    public void evalPopulation(Population population, City cities[]){
+    public void evalPopulation(Population population, Distance cities[], Duration duration[]){
         double populationFitness = 0;
 
         // Loop over population evaluating individuals and summing population fitness
         for (Individual individual : population.getIndividuals()) {
-            populationFitness += this.calcFitness(individual, cities);
+            populationFitness += this.calcFitness(individual, cities, duration);
         }
 
         double avgFitness = populationFitness / population.size();

@@ -1,6 +1,6 @@
 package com.example.authorisationfirebase;
 
-public class City {
+public class Distance {
 
     /**
      * A simple abstraction of a city. This class maintains Cartesian coordinates
@@ -20,7 +20,7 @@ public class City {
          * @param y
          *            Y position of city
          */
-        public City(int x, int y) {
+        public Distance(int x, int y) {
             this.x = x;
             this.y = y;
         }
@@ -30,18 +30,18 @@ public class City {
          *
          * Pythagorean theorem: a^2 + b^2 = c^2
          *
-         * @param city
+         * @param distance
          *            The city to calculate the distance from
          * @return distance The distance from the given city
          */
-        public double distanceFrom(City city) {
+        public double distanceFrom(Distance distance) {
             // Give difference in x,y
-            double deltaXSq = Math.pow((city.getX() - this.getX()), 2);
-            double deltaYSq = Math.pow((city.getY() - this.getY()), 2);
+            double deltaXSq = Math.pow((distance.getX() - this.getX()), 2);
+            double deltaYSq = Math.pow((distance.getY() - this.getY()), 2);
 
             // Calculate shortest path
-            double distance = Math.sqrt(Math.abs(deltaXSq + deltaYSq));
-            return distance;
+            double distances = Math.sqrt(Math.abs(deltaXSq + deltaYSq));
+            return distances;
         }
 
         /**

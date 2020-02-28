@@ -2,8 +2,10 @@ package com.example.authorisationfirebase;
 
 public class Route {
 
-    private City route[];
+    private Distance route[];
+    private Duration routeDuration[];
     private double distance = 0;
+    private double duration = 0;
 
     /**
      * Initialize Route
@@ -13,13 +15,15 @@ public class Route {
      * @param cities
      *            The cities referenced
      */
-    public Route(Individual individual, City cities[]) {
+    public Route(Individual individual, Distance cities[], Duration durations[]) {
         // Get individual's chromosome
         int chromosome[] = individual.getChromosome();
         // Create route
-        this.route = new City[cities.length];
+        this.route = new Distance[cities.length];
+        this.routeDuration = new Duration[durations.length];
         for (int geneIndex = 0; geneIndex < chromosome.length; geneIndex++) {
             this.route[geneIndex] = cities[chromosome[geneIndex]];
+            this.routeDuration[geneIndex] = durations[chromosome[geneIndex]];
         }
     }
 
@@ -43,6 +47,23 @@ public class Route {
         this.distance = totalDistance;
 
         return totalDistance;
+    }
+
+    public double getDuration() {
+        if (this.duration > 0) {
+            return this.duration;
+        }
+
+        // Loop over cities in route and calculate route distance
+        double totalDuration = 0;
+        for (int cityIndex = 0; cityIndex + 1 < this.routeDuration.length; cityIndex++) {
+            totalDuration += this.routeDuration[cityIndex].durationFrom(this.routeDuration[cityIndex + 1]);
+        }
+
+        totalDuration += this.routeDuration[this.routeDuration.length - 1].durationFrom(this.routeDuration[0]);
+        this.duration = totalDuration;
+
+        return totalDuration;
     }
 
 }
