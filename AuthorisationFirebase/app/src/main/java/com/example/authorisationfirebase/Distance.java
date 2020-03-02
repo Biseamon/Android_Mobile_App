@@ -9,8 +9,8 @@ public class Distance {
      * @author bkanber
      *
      */
-        private int x;
-        private int y;
+        private double x;
+        private double y;
 
         /**
          * Initalize a city
@@ -20,7 +20,7 @@ public class Distance {
          * @param y
          *            Y position of city
          */
-        public Distance(int x, int y) {
+        public Distance(double x, double y) {
             this.x = x;
             this.y = y;
         }
@@ -44,12 +44,14 @@ public class Distance {
             return distances;
         }
 
+
+
         /**
          * Get x position of city
          *
          * @return x X position of city
          */
-        public int getX() {
+        public double getX() {
             return this.x;
         }
 
@@ -58,7 +60,7 @@ public class Distance {
          *
          * @return y Y position of city
          */
-        public int getY() {
+        public double getY() {
             return this.y;
         }
 

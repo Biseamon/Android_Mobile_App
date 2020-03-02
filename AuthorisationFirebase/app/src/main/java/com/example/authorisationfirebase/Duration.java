@@ -10,8 +10,8 @@ package com.example.authorisationfirebase;
          * @author bkanber
          *
          */
-        private int x;
-        private int y;
+        private double x;
+        private double y;
 
         /**
          * Initalize a city
@@ -21,7 +21,7 @@ package com.example.authorisationfirebase;
          * @param y
          *            Y position of city
          */
-        public Duration(int x, int y) {
+        public Duration(double x, double y) {
             this.x = x;
             this.y = y;
         }
@@ -50,7 +50,7 @@ package com.example.authorisationfirebase;
          *
          * @return x X position of city
          */
-        public int getX() {
+        public double getX() {
             return this.x;
         }
 
@@ -59,8 +59,7 @@ package com.example.authorisationfirebase;
          *
          * @return y Y position of city
          */
-        public int getY() {
+        public double getY() {
             return this.y;
         }
-
     }

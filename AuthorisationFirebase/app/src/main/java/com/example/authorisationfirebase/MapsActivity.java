@@ -120,8 +120,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void  onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, location -> {
-            lat = location.getLatitude();
-            lng = location.getLongitude();
+            lat = 40.706804; //location.getLatitude();
+            lng = -73.620917;//location.getLongitude();
             LatLng currentLoc = new LatLng(lat, lng);
 
             GetNearbyPlaces getNearbyPlaces = new GetNearbyPlaces();
@@ -163,8 +163,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     getDirectionsData.execute(dataTransfer);
 
-                    lat = location.getLatitude();
-                    lng = location.getLongitude();
+                    lat = 40.706804;//location.getLatitude();
+                    lng = -73.620917;//location.getLongitude();
                     LatLng currentLoc = new LatLng(lat, lng);
 
                     final  String TAG1= "TAG1";

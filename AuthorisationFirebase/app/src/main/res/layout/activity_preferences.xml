@@ -96,7 +96,17 @@
                     android:id="@+id/button_continue"
                     android:text="@string/cont_btn"
                     android:textSize="30sp"
-                    android:background="@color/colorPrimary"/>
+                    android:background="@color/colorPrimary"
+                    android:layout_marginBottom="10dp"/>
+
+                 <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:id="@+id/logOut"
+                    android:text="Log out"
+                    android:textSize="20sp"
+                    android:background="@color/cardview_light_background"/>
         </LinearLayout>
 
     </ScrollView>

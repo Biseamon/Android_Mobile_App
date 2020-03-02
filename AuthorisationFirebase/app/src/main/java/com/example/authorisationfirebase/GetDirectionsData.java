@@ -1,5 +1,6 @@
 package com.example.authorisationfirebase;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -28,7 +29,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
     private String url1;
     private String googleDirectionsData;
     private String distUrl;
-    //List<Map<String, String>> list;
+    @SuppressLint("StaticFieldLeak")
     private TextView textView;
 
     GetDirectionsData(TextView txtView){
@@ -63,7 +64,6 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
             distUrl = getDistanceUrl(origin,destination,getPlacesId(trueUrl));
 
-            //Parser parser1 = new Parser();
             DownloadUrl downloadUrl1 = new DownloadUrl();
             String distObj = distUrl;
             url1 = "";
@@ -187,15 +187,9 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
             double distanceSum = 0;
             double durationSum = 0;
-            double distanceSumMeters = 0;
-
 
             for (int i = 0; i < distanceList.size(); i++) {
                 distanceSum = distanceSum + (distanceList.get(i))/1000;
-            }
-
-            for (int i = 0; i < distanceList.size(); i++) {
-                distanceSumMeters = distanceSumMeters + (distanceList.get(i));
             }
 
             for (int i = 0; i < durationList.size(); i++) {
@@ -207,7 +201,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
             durationMillis = endTimeDistance - startTimeDistance;
 
             Log.i("parser", "parseDirect: " + distanceSum + " km "  + "\n" + durationSum + " min " + "\n" + durationMillis + " ms");
-            distanceAndDuration = distanceSum +" km " + "\n" + distanceSumMeters + " m " + "\n" + durationSum +
+            distanceAndDuration = distanceSum +" km "  + "\n" + durationSum +
                     " min " + "\n"  + durationMillis + " ms";
 
             updateTxt(distanceAndDuration);

@@ -25,6 +25,7 @@ public class Preferences extends AppCompatActivity {
 
     private Button button;
     private Button contBtn;
+    private Button logOut;
     private FirebaseFirestore fireStore;
     private FirebaseAuth firebaseAuth;
 
@@ -49,6 +50,8 @@ public class Preferences extends AppCompatActivity {
 
         button = findViewById(R.id.saveButton);
         contBtn = findViewById(R.id.button_continue);
+        logOut = findViewById(R.id.logOut);
+
         firebaseAuth = FirebaseAuth.getInstance();
         fireStore = FirebaseFirestore.getInstance();
 
@@ -111,6 +114,14 @@ public class Preferences extends AppCompatActivity {
         contBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
             startActivity(intent);
+        });
+
+        logOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getApplicationContext(), Login.class));
+            }
         });
 
     }

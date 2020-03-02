@@ -66,11 +66,12 @@ public class GeneticAlgorithm {
         // Get fitness
         Route route = new Route(individual, cities, duration);
         double fitness = 1 / route.getDistance();
-
+        double fitness1 = 1 / route.getDuration();
+        double sum = fitness + fitness1;
         // Store fitness
-        individual.setFitness(fitness);
+        individual.setFitness(sum);
 
-        return fitness;
+        return sum;
     }
 
     /**
