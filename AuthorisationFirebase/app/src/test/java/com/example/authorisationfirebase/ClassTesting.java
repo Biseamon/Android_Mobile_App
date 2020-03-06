@@ -7,6 +7,10 @@ import org.junit.runner.notification.Failure;
 
 public class ClassTesting {
 
+    /**
+     * Test all the classes and checks whether they pass or fail.
+     */
+
     @Test
     public void distanceClassTesting(){
         Result result = JUnitCore.runClasses(Distance.class);

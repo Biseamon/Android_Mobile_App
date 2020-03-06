@@ -12,6 +12,10 @@ import androidx.test.rule.ActivityTestRule;
 
 public class MapsActivityTest {
 
+    /**
+     * Test for MapsActivity.
+     */
+
     @Rule
     public ActivityTestRule<MapsActivity> mapsActivityActivityTestRule = new ActivityTestRule<>(MapsActivity.class);
     private MapsActivity mapsActivity = null;
@@ -21,6 +25,9 @@ public class MapsActivityTest {
         mapsActivity = mapsActivityActivityTestRule.getActivity();
     }
 
+    /**
+     * Test the textViews and Buttons
+     */
     @Test
     public void testLaunch(){
         View view = mapsActivity.findViewById(R.id.distDur);
@@ -32,7 +39,7 @@ public class MapsActivityTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         mapsActivity = null;
     }
 }

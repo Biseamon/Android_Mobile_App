@@ -12,17 +12,24 @@ import androidx.test.rule.ActivityTestRule;
 
 public class RegisterTest {
 
+    /**
+     * Test for Register activity.
+     */
+
     @Rule
     public ActivityTestRule<Register> registerActivityTestRule = new ActivityTestRule<>(Register.class);
     private Register register = null;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp(){
 
         register = registerActivityTestRule.getActivity();
 
     }
 
+    /**
+     * Test the textViews and Buttons
+     */
     @Test
     public void testLaunch(){
         View view = register.findViewById(R.id.fullName);
@@ -40,7 +47,7 @@ public class RegisterTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown(){
 
         register = null;
 

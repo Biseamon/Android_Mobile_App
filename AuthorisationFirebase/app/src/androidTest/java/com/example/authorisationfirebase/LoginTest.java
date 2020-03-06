@@ -14,15 +14,22 @@ import androidx.test.rule.ActivityTestRule;
 
 public class LoginTest {
 
+    /**
+     * Test for Login activity.
+     */
+
     @Rule
     public ActivityTestRule<Login> loginActivityTestRule = new ActivityTestRule<>(Login.class);
     private Login login = null;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp(){
         login = loginActivityTestRule.getActivity();
     }
 
+    /**
+     * Test the textViews and Buttons
+     */
     @Test
     public void launchTest(){
         View view = login.findViewById(R.id.Email);
@@ -40,7 +47,7 @@ public class LoginTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown(){
         login = null;
     }
 }

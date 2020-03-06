@@ -12,15 +12,22 @@ import androidx.test.rule.ActivityTestRule;
 
 public class PreferencesTest {
 
+    /**
+     * Test for Preferences Activity.
+     */
+
     @Rule
     public ActivityTestRule<Preferences> preferencesActivityTestRule = new ActivityTestRule<>(Preferences.class);
     private Preferences preferences = null;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp(){
         preferences = preferencesActivityTestRule.getActivity();
     }
 
+    /**
+     * Test the textViews and Buttons
+     */
     @Test
     public void testLaunch(){
         View view = preferences.findViewById(R.id.restaurants);
@@ -38,7 +45,7 @@ public class PreferencesTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown(){
         preferences = null;
     }
 }
