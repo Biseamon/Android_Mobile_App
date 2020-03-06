@@ -16,48 +16,58 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class Login extends AppCompatActivity {
 
-    private EditText mEmail,mPassword;
-    private Button mLoginBtn;
-    private TextView mCreateBtn;
-    private ProgressBar progressBar;
-    private FirebaseAuth fAuth;
+    /**
+     * Login.class is an Activity that performs actions connected to FireBase.
+     * It allows new users to login into their accounts.
+     */
+
+    private EditText mEmail,mPassword;     //email and password slots.
+    private Button mLoginBtn;             //login button.
+    private TextView mCreateBtn;         //create an account button.
+    private ProgressBar progressBar;    //progress bar.
+    private FirebaseAuth fAuth;        //FireBase authentication.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mEmail = findViewById(R.id.Email);
-        mPassword = findViewById(R.id.password);
-        progressBar = findViewById(R.id.progressBar);
-        fAuth = FirebaseAuth.getInstance();
-        mLoginBtn = findViewById(R.id.loginBtn);
-        mCreateBtn = findViewById(R.id.createText);
+        mEmail = findViewById(R.id.Email);               //links mEmail variable to Email id in the xml.
+        mPassword = findViewById(R.id.password);        //links mPassword variable to password id in the xml.
+        progressBar = findViewById(R.id.progressBar);  //links progressBar variable to progressBar id in the xml.
+        fAuth = FirebaseAuth.getInstance();           //initialises the FireBase authentication.
+        mLoginBtn = findViewById(R.id.loginBtn);     //links mLogin variable to loginBtn id in the xml.
+        mCreateBtn = findViewById(R.id.createText); //links mCreateBtn button variable to createText id in the xml.
 
+        /**
+         * Sets on click listener for login button.
+         */
         mLoginBtn.setOnClickListener(v -> {
 
-            String email = mEmail.getText().toString().trim();
-            String password = mPassword.getText().toString().trim();
+            String email = mEmail.getText().toString().trim();         //Gets the email.
+            String password = mPassword.getText().toString().trim();  //Gets the password.
 
             if(TextUtils.isEmpty(email)){
                 mEmail.setError("Email is Required.");
-                return;
+                return;  //checks if email slot is empty and if yes asks to fill in the slot.
             }
 
             if(TextUtils.isEmpty(password)){
                 mPassword.setError("Password is Required.");
-                return;
+                return;  //checks if password slot is empty and if yes asks to fill in the slot.
             }
 
             if(password.length() < 6){
                 mPassword.setError("Password Must be >= 6 Characters");
-                return;
+                return;  //checks if the password is at least 6 characters.
             }
 
-            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.VISIBLE);  //sets the progress bar to visible.
 
-            // authenticate the user
-
+            /**
+             * Sets an action when email and password are ok.
+             * It takes the user to a new activity called, Preferences.class.
+             */
             fAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
                     Toast.makeText(Login.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
@@ -72,7 +82,11 @@ public class Login extends AppCompatActivity {
         });
 
 
-
+        /**
+         * Sets on click listener for mCreate.
+         * On click it goes to a new Activity, called Register.class where a new
+         * user can register.
+         */
         mCreateBtn.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),Register.class)));
 
 

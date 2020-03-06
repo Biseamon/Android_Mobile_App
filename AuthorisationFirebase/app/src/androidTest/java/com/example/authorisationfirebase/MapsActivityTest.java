@@ -17,7 +17,7 @@ public class MapsActivityTest {
     private MapsActivity mapsActivity = null;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp()  {
         mapsActivity = mapsActivityActivityTestRule.getActivity();
     }
 

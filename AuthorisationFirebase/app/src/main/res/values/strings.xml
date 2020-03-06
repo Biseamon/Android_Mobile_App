@@ -39,5 +39,6 @@
     <string name="geneticAlgorithm">GA</string>
     <string name="here">here</string>
     <string name="title_activity_gamaps">Map</string>
+    <string name="title_activity_maps_g">Map</string>
 
 </resources>

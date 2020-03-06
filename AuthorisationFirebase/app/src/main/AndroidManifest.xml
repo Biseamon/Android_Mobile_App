@@ -41,15 +41,13 @@
             android:label="@string/title_activity_maps" />
         <activity android:name=".Preferences" />
         <activity android:name=".Login">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
-        <activity android:name=".Register"/>
-
-
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".Register" />
         <activity android:name=".MainActivity" />
 
         <meta-data

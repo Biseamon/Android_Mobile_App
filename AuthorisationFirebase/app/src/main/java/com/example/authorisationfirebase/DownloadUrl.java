@@ -12,6 +12,12 @@ import java.net.URL;
 
 public class DownloadUrl {
 
+    /**
+     * DownloadUrl.class is needed for downloading data by using
+     * internet HTTP request.
+     *
+     */
+
     public String readUrl(String myUrl) throws IOException
     {
         String data = "";
@@ -19,22 +25,22 @@ public class DownloadUrl {
         HttpURLConnection urlConnection = null;
 
         try {
-            URL url = new URL(myUrl);
-            urlConnection=(HttpURLConnection) url.openConnection();
-            urlConnection.connect();
+            URL url = new URL(myUrl);                                //initialise the URL class.
+            urlConnection=(HttpURLConnection) url.openConnection(); //opens a new connection
+            urlConnection.connect();                               // the urls to connected status
 
-            inputStream = urlConnection.getInputStream();
+            inputStream = urlConnection.getInputStream();        //reads the input and converts it to a string
             BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
             StringBuffer sb = new StringBuffer();
 
             String line = "";
-            while((line = br.readLine()) != null)
+            while((line = br.readLine()) != null)   //while loop for reading the data from the internet and convert it to a string
             {
                 sb.append(line);
             }
 
             data = sb.toString();
-            br.close();
+            br.close();    //after completion the reader needs to be closed.
 
 
         } catch (MalformedURLException e) {
@@ -48,7 +54,7 @@ public class DownloadUrl {
         }
         Log.d("DownloadURL","Returning data= "+data);
 
-        return data;
+        return data;  //retruns the requested data in form of a String
     }
 
 }
