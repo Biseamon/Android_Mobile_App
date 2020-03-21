@@ -10,20 +10,22 @@ package com.example.authorisationfirebase;
          * @author bkanber
          *
          */
-        private double x;
-        private double y;
+        private double xAndY;
+       // private double y;
 
         /**
          * Initalize a city
          *
-         * @param x
-         *            X position of city
-         * @param y
-         *            Y position of city
          */
-        public Duration(double x, double y) {
-            this.x = x;
-            this.y = y;
+        public Duration(double xAndY) {
+            this.xAndY = xAndY;
+        }
+
+        public double durations(Duration duration){
+
+            double xAndY = duration.getX();
+
+            return xAndY;
         }
 
         /**
@@ -35,15 +37,15 @@ package com.example.authorisationfirebase;
          *            The city to calculate the distance from
          * @return distance The distance from the given city
          */
-        public double durationFrom(Duration duration) {
-            // Give difference in x,y
-            double deltaXSq = Math.pow((duration.getX() - this.getX()), 2);
-            double deltaYSq = Math.pow((duration.getY() - this.getY()), 2);
-
-            // Calculate shortest path
-            double durations = Math.sqrt(Math.abs(deltaXSq + deltaYSq));
-            return durations;
-        }
+//        public double durationFrom(Duration duration) {
+//            // Give difference in x,y
+//            double deltaXSq = Math.pow((duration.getX() - this.getX()), 2);
+//            double deltaYSq = Math.pow((duration.getY() - this.getY()), 2);
+//
+//            // Calculate shortest path
+//            double durations = Math.sqrt(Math.abs(deltaXSq + deltaYSq));
+//            return durations;
+//        }
 
         /**
          * Get x position of city
@@ -51,7 +53,7 @@ package com.example.authorisationfirebase;
          * @return x X position of city
          */
         public double getX() {
-            return this.x;
+            return this.xAndY;
         }
 
         /**
@@ -59,7 +61,7 @@ package com.example.authorisationfirebase;
          *
          * @return y Y position of city
          */
-        public double getY() {
-            return this.y;
-        }
+//        public double getY() {
+//            return this.y;
+//        }
     }

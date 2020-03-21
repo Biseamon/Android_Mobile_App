@@ -88,7 +88,7 @@ class GetNearbyPlaces extends AsyncTask<Object, String, String> {
             LatLng latLng = new LatLng(lat, lng);  //lat + lng.
 
             markerOptions.position(latLng);                                                                //sets the position of the marker.
-            markerOptions.title(placeName + " : " + place_id + latLng + vicinity);                        //sets its title.
+            markerOptions.title(placeName + " " + latLng + place_id  + vicinity);                        //sets its title.
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)); // sets the icon.
 
             mMap.addMarker(markerOptions);                                //add the marker to the map.

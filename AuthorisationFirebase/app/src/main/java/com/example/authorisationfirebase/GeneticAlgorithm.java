@@ -34,7 +34,6 @@ public class GeneticAlgorithm {
 
         return population;
     }
-
     /**
      * Check if population has met termination condition -- this termination
      * condition is a simple one; simply check if we've exceeded the allowed
@@ -58,34 +57,34 @@ public class GeneticAlgorithm {
      *
      * @param individual
      *            the individual to evaluate
-     * @param cities
+     * @param distances
      *            the cities being referenced
      * @return double The fitness value for individual
      */
-    public double calcFitness(Individual individual, Distance cities[], Duration duration[]){
+    public double calcFitness(Individual individual, Distance distances[], Duration duration[]){
         // Get fitness
-        Route route = new Route(individual, cities, duration);
+        Route route = new Route(individual, distances, duration);
         double fitness = 1 / route.getDistance();
         double fitness1 = 1 / route.getDuration();
         double sum = fitness + fitness1;
         // Store fitness
-        individual.setFitness(sum);
+        individual.setFitness(fitness);
 
-        return sum;
+        return fitness;
     }
 
     /**
      * Evaluate population -- basically run calcFitness on each individual.
      *
      * @param population the population to evaluate
-     * @param cities the cities being referenced
+     * @param distances the cities being referenced
      */
-    public void evalPopulation(Population population, Distance cities[], Duration duration[]){
+    public void evalPopulation(Population population, Distance distances[], Duration duration[]){
         double populationFitness = 0;
 
         // Loop over population evaluating individuals and summing population fitness
         for (Individual individual : population.getIndividuals()) {
-            populationFitness += this.calcFitness(individual, cities, duration);
+            populationFitness += this.calcFitness(individual, distances, duration);
         }
 
         double avgFitness = populationFitness / population.size();
@@ -247,6 +246,4 @@ public class GeneticAlgorithm {
         // Return mutated population
         return newPopulation;
     }
-
-
 }

@@ -1,6 +1,7 @@
 package com.example.authorisationfirebase;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -48,6 +49,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FusedLocationProviderClient fusedLocationProviderClient;  //gets the current location.
 
     private TextView distanceAndDuration;  //Displays the distance and duration in a text view.
+    private TextView distanceAndDuration2;  //Displays the distance and duration in a text view.
 
     private Button generateRoute;  //generates route button.
     private Double lat;           //latitude - global variable.
@@ -76,12 +78,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Toast.makeText(getApplicationContext(), "Please turn on your location!", Toast.LENGTH_SHORT).show();
         }
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this); //initialises and gets the currenct location of the device.
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this); //initialises and gets the current location of the device.
         firebaseAuth = FirebaseAuth.getInstance();            //initialises the FireBase authentication.
         fireStore = FirebaseFirestore.getInstance();         //initialises the FireStore instance.
         signIn = firebaseAuth.getCurrentUser().getUid();    //checks for already logged in users.
 
         distanceAndDuration = findViewById(R.id.distDur);    //links distanceAndDuration to distDur in XML.
+        distanceAndDuration2 = findViewById(R.id.distDur2);    //links distanceAndDuration to distDur in XML.
 
         geneticAlgorithm = findViewById(R.id.geneticAlg);  //links geneticAlgorithm to geneticAlg in XML.
 
@@ -176,16 +179,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     //Initialising the GetDirectionsData.class/
                     GetDirectionsData getDirectionsData = new GetDirectionsData(distanceAndDuration);
 
-                    Object dataTransfer[] = new Object[2]; //prepares 2 objects for a data transfer.
+                    Object dataTransfer[] = new Object[3]; //prepares 2 objects for a data transfer.
 
                     dataTransfer[0] = mMap; //Google maps transfer.
                     dataTransfer[1] = url; //Places API link transfer.
 
                     getDirectionsData.execute(dataTransfer); //transfers the two objects to a class extending AsyncTask.
 
-                    lat = location.getLatitude();   //this finds the current latitude the device is located at. The latitude can be entered manually too.
-                    lng = location.getLongitude(); //this finds the current longitude the device is located at. The longitude can be entered manually too.
+                    lat =  location.getLatitude();//40.706804;   //this finds the current latitude the device is located at. The latitude can be entered manually too.
+                    lng = location.getLongitude(); //-73.620917; //this finds the current longitude the device is located at. The longitude can be entered manually too.
                     LatLng currentLoc = new LatLng(lat, lng);  //lat + lng
+
+                    dataTransfer[2] = currentLoc;
 
                     final  String TAG2= "TAG2";  //tag for logs.
                     Log.i(TAG2, placeType.toString() + " " + minPrice + maxPrice); //test/check the result.
@@ -211,13 +216,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
 
-                //Initialises the GetDistanceMatrix.class.
-                GetDistanceMatrixData getDistanceMatrixData = new GetDistanceMatrixData();
+               // Initialises the GetDistanceMatrix.class.
+                GetDistanceMatrixData getDistanceMatrixData = new GetDistanceMatrixData(distanceAndDuration2);
                 Object[] dataTransfer = new Object[2];  //prepares two objects for data transfer.
 
                 Object placeType = listOfPreferences.get("PlaceType");        //Place type object.
                 Object minPrice =  listOfPreferences.get("PlaceMinPrice");   //minPrice object.
-                Object maxPrice =  listOfPreferences.get("PlaceMaxPrice");  //maxPricee object.
+                Object maxPrice =  listOfPreferences.get("PlaceMaxPrice");  //maxPrice object.
 
                 String url = getUrl(lat, lng, (String) placeType, minPrice, maxPrice); //Places API link.
                 dataTransfer[0] = mMap;   //transfer the first object containing the google maps.
@@ -225,6 +230,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 getDistanceMatrixData.execute(dataTransfer);
 
                 Log.i("placesApi", "Places API " + url);  //test/check the Places API result.
+
+                startActivity(new Intent(getApplicationContext(),GAMaps.class));
 
             }
         });
@@ -251,7 +258,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         googlePlaceUrl.append("query="+nearbyPlace);
         googlePlaceUrl.append("&location="+latitude+","+longitude);
         googlePlaceUrl.append("&radius=" + placeRadius);
-        googlePlaceUrl.append("&opennow");  //only displays places that are open.
+        //googlePlaceUrl.append("&opennow");  //only displays places that are open.
         googlePlaceUrl.append("&minprice=" +minPrice);
         googlePlaceUrl.append("&maxprice=" +maxPrice);
         googlePlaceUrl.append("&key="+"AIzaSyCuRGuOxVFfA2rs5gT-w2Y8K_RSlgzualg"); //API_KEY is supposed to be personal and unique. Do not share it.

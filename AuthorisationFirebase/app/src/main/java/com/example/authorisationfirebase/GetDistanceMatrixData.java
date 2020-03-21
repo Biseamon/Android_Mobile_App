@@ -1,11 +1,14 @@
 package com.example.authorisationfirebase;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +20,9 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
      * from a PlaceAPI and use it for a distance matrix API.
      */
 
+    @SuppressLint("StaticFieldLeak")
+    private TextView textView; //widget displaying distance time and processing time of the GA.
+
     private List<Map<String, String>> nearbyPlaceList; //List of nearby places. This list is dynamic and changes every time user chooses a new reference.
     private List<String> placesOrigins;               //List of origin places.
     private List<String> placesDestinations;         //List of destination places.
@@ -24,6 +30,8 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
     private String[][] durationMatrix;             //duration matrix.
     private String[][] distanceMatrixDetailed;    //a more detailed distance matrix.
     private String[][] durationMatrixDetailed;   //a more detailed duration matrix.
+
+    DecimalFormat decimalFormat = new DecimalFormat("#.##"); //changes a double number format.
 
     private List<String> elementDistanceNo1 = new ArrayList<>();  //1st list of elements from the "rows" in the distance matrix API.
     private List<String> elementDistanceNo2 = new ArrayList<>();  //2nd list of elements from the "rows" in the distance matrix API.
@@ -59,7 +67,8 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
 
     public static int maxGenerations = 100; //number of generations that genetic algorithm will perform.
 
-    public GetDistanceMatrixData(){}  //an empty constructor.
+    //public GetDistanceMatrixData(){}  //an empty constructor.
+    public GetDistanceMatrixData(TextView txtView){this.textView = txtView;}  //textView constructor.
 
     @Override
     protected String doInBackground(Object... objects) {
@@ -116,6 +125,7 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
         placesDestinations = parser.parseDestinations(s);                  //parses destination places.
         List<String> placeDistances = parser.parseDistanceFromMatrix(s);  //parses distances between origin and destinations.
         List<String> placeDurations = parser.parseDurationFromMatrix(s); //parses durations between origin and destinations.
+
 
         elementDistanceNo1 = placeDistances.subList(0, 10);   //element of distances contains a sublist of placeDistances.
         elementDistanceNo2 = placeDistances.subList(10, 20);  //element of distances contains a sublist of placeDistances.
@@ -195,7 +205,7 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
         for (int i = 0; i < distanceMatrix.length; i++) {
             for (int j = 0; j < distanceMatrix[i].length; j++) {
                 distanceMatrix[0][j] = elementDistanceNo1.get(j).replace("m","")
-                        .replace("k", "")    //first 10 elements stored.
+                        .replace("k", "")    //first 10 of j elements stored.
                         .replace(" " , "");
                 distanceMatrix[1][j] = elementDistanceNo2.get(j).replace("m","")
                         .replace("k", "")
@@ -228,7 +238,9 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
                 double x = Double.parseDouble(distanceMatrix[i][0]);   //Stores the distances one by one in a double variable needed for Distance.class.
                 double y = Double.parseDouble(distanceMatrix[0][j]);  //Stores the distances one by one in a double variable needed for Distance.class.
 
-              distances[i] = new Distance(x,y); //Creates a new object of a class containing x,y as parameters.
+                double xAndY = Double.parseDouble(distanceMatrix[i][j]);
+
+              distances[i] = new Distance(xAndY); //Creates a new object of a class containing x,y as parameters.
             }
         }
 
@@ -238,7 +250,7 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
         for (int i = 0; i < durationMatrix.length; i++) {
             for (int j = 0; j < durationMatrix[i].length; j++) {
                 durationMatrix[0][j] = elementDuration1.get(j).replace("min","")
-                        .replace("s", "")  //first 10 elements stored.
+                        .replace("s", "")  //first 10 of j elements stored.
                         .replace(" " , "");
                 durationMatrix[1][j] = elementDuration2.get(j).replace("min","")
                         .replace("s", "")
@@ -271,7 +283,9 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
                 double x = Double.parseDouble(durationMatrix[i][0]);   //Stores the durations one by one in a double variable needed for Duration.class.
                 double y = Double.parseDouble(durationMatrix[0][j]);  //Stores the durations one by one in a double variable needed for Duration.class.
 
-                    durations[i] = new Duration(x,y);   //Creates a new object of a class containing x,y as parameters.
+                double xAndY = Double.parseDouble(durationMatrix[i][j]);
+
+                    durations[i] = new Duration(xAndY);   //Creates a new object of a class containing x,y as parameters.
             }
         }
 
@@ -294,7 +308,7 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
         while (ga.isTerminationConditionMet(generation, maxGenerations) == false) {
             // Print fittest individual from population
             Route route = new Route(population.getFittest(0), distances, durations);
-            System.out.println("G"+generation+" Distance and duration: " + route.getDistance() + " km ");
+            System.out.println("G"+generation+" Distance and duration: " + decimalFormat.format(route.getDistance()) + " km " + decimalFormat.format(route.getDuration()) + " min");
 
             // Apply crossover
             population = ga.crossoverPopulation(population);
@@ -319,8 +333,17 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
                                                             + " " + durationMillis + " ms" + " "
                 + "Stopped after " + maxGenerations + " generations. " );
 
-        System.out.print(getAllDistancesAndDurations());   //print out all the origins and destinations with their distances and duration. Each pair of origin and destination will have its corresponding time and distance.
+        updateTxt("Genetic Algorithm " + "\n" + decimalFormat.format(route.getDistance()) + " km " + "\n" +
+                       decimalFormat.format(route.getDuration()) + " min " + "\n" +
+                       durationMillis + " ms" ); //updates the textView field by adding total distance, duration and processing time.
 
+        //System.out.print(getAllDistancesAndDurations());   //print out all the origins and destinations with their distances and duration. Each pair of origin and destination will have its corresponding time and distance.
+
+    }
+
+    //Updates the textView field.
+    public void updateTxt(String data){
+        textView.setText(data);
     }
 
     /**

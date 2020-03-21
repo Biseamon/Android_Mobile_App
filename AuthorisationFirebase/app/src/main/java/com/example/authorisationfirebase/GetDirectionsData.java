@@ -38,6 +38,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
     private String distanceUrl;             //Distance API link
     @SuppressLint("StaticFieldLeak")       //Annotation that prevents memory leaks caused by TextView within a class and not an Activity.
     private TextView textView;
+    private LatLng currentLoc;
 
     GetDirectionsData(TextView txtView){
         this.textView = txtView;  //constructor
@@ -54,6 +55,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
         mMap = (GoogleMap) objects[0];          //here the map is loaded in the background after the request from the MapsActivity.class was made.
         nearbyPlacesUrl = (String) objects[1]; //here the nearbyPlacesUrl that returns nearby places is used in order extract from it data needed for Directions API.
+        currentLoc = (LatLng) objects[2];
 
         DownloadUrl downloadUrl = new DownloadUrl();
         try {
@@ -63,7 +65,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
             List<Map<String, String>> listOfWaypoints;  //List of maps needed to store the data from the parsed API link.
 
-            listOfWaypoints = parser.parseDirectionData(googleDirectionsData);  //parses the
+            listOfWaypoints = parser.parseDirectionData(googleDirectionsData);  //parses the data from the Direction API link.
 
             String origin = listOfWaypoints.get(0).toString()   //origin place needed to complete the API request.
                     .replace("{", "")
@@ -75,7 +77,8 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
                     .replace("}","")
                     .replace("=", ":");
 
-            distanceUrl = getDistanceUrl(origin,destination,getPlacesId(listOfWaypoints));  //Finally formed the Directions API link.
+            distanceUrl = getDistanceUrl(currentLoc.toString().replace("lat/lng:","").replace("(","").replace(")","").replace(" ","")
+                    ,currentLoc.toString().replace("lat/lng:","").replace("(","").replace(")","").replace(" ",""),getPlacesId(listOfWaypoints));  //Finally formed the Directions API link.
 
             DownloadUrl downloadUrl1 = new DownloadUrl();
             finalUrl = "";
@@ -216,7 +219,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
             durationMillis = endTimeDistance - startTimeDistance;  //Calculates the time spent on processing the operations.
 
             Log.i("displayTimeAndDistance", "" + decimalFormat.format(distanceSum) + " km "  + "\n" + decimalFormat.format(durationSum) + " min " + "\n" + durationMillis + " ms");
-            distanceAndDuration = decimalFormat.format(distanceSum) +" km "  + "\n" + decimalFormat.format(durationSum) +
+            distanceAndDuration = "Direction API" + "\n" +decimalFormat.format(distanceSum) +" km "  + "\n" + decimalFormat.format(durationSum) +
                     " min " + "\n"  + durationMillis + " ms";
 
             updateTxt(distanceAndDuration); //updates the textView field by adding total distance, duration and processing time.
@@ -228,7 +231,6 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
         }
 
     }
-
 
     //Updates the textView field.
     public void updateTxt(String data){

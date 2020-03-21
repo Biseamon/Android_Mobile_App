@@ -9,20 +9,24 @@ public class Distance {
      * @author bkanber
      *
      */
-        private double x;
-        private double y;
+        private double xAndY;
 
         /**
          * Initalize a city
          *
-         * @param x
-         *            X position of city
-         * @param y
-         *            Y position of city
+         *
          */
-        public Distance(double x, double y) {
-            this.x = x;
-            this.y = y;
+        public Distance(double xAndY) {
+            this.xAndY = xAndY;
+
+        }
+
+        public double distances(Distance distance){
+
+
+            double xAndY = distance.getX();
+
+            return xAndY;
         }
 
         /**
@@ -46,40 +50,6 @@ public class Distance {
 //    }
 
 
-    /**
-     * This method is needed in cases where the
-     * distance between two latitudes and longitudes
-     * must be calculated.
-     * It uses a math formula called Haversine formula.
-     *
-     * In our case all we need to is we have to pass the latitudes and
-     * longitudes of the places so the method can perform the calculus.
-     *
-     * Thereafter, the genetic algorithm will peroform in oreder to solve the
-     * TSP problem.
-     *
-     * At the moment the data that is processed by the method does not correspond to latitude
-     * and longitude coordinates. Hence, there will be an explanation  in the Result section of
-     * the dissertation of how that could be achieved.
-     *
-      * @param distance
-     * @return
-     */
-    public double distanceBetweenLatLng(Distance distance){
-        double lat1 = Math.toRadians(this.getX());
-        double lng1 = Math.toRadians(this.getY());
-        double lat2 = Math.toRadians(distance.getX());
-        double lng2 = Math.toRadians(distance.getY());
-
-        // Haversine Formula (Distance of points on sphere)
-        double Radius = 6371; // radius of earth in km
-
-        double dLat = lat2 - lat1;
-        double dLng = lng2 - lng1;
-        double a = Math.pow(Math.sin(dLat / 2),2) + Math.pow(Math.sin(dLng / 2),2) * Math.cos(lat1) * Math.cos(lat2);
-        double c = 2 * Math.asin(Math.sqrt(a));
-        return Radius * c;
-    }
 
         /**
          * Get x position of city
@@ -87,16 +57,15 @@ public class Distance {
          * @return x X position of city
          */
         public double getX() {
-            return this.x;
+            return this.xAndY;
         }
+
 
         /**
          * Get y position of city
          *
          * @return y Y position of city
          */
-        public double getY() {
-            return this.y;
-        }
+
 
 }
