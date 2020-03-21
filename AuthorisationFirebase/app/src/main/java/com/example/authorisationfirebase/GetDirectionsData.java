@@ -67,16 +67,6 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
             listOfWaypoints = parser.parseDirectionData(googleDirectionsData);  //parses the data from the Direction API link.
 
-            String origin = listOfWaypoints.get(0).toString()   //origin place needed to complete the API request.
-                    .replace("{", "")
-                    .replace("}","")
-                    .replace("=", ":");
-
-            String destination = listOfWaypoints.get(0).toString()  //destination place needed to complete the API request.
-                    .replace("{", "")
-                    .replace("}","")
-                    .replace("=", ":");
-
             distanceUrl = getDistanceUrl(currentLoc.toString().replace("lat/lng:","").replace("(","").replace(")","").replace(" ","")
                     ,currentLoc.toString().replace("lat/lng:","").replace("(","").replace(")","").replace(" ",""),getPlacesId(listOfWaypoints));  //Finally formed the Directions API link.
 
@@ -200,6 +190,9 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
                 mMap.addMarker(new MarkerOptions().position(latLng1).title("Start_location " + name) //title for markers.
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));    //sets the icon of the marker.
             }
+
+            mMap.addMarker(new MarkerOptions().position(start_LatLng_list.get(0)).title("Current location")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
             double distanceSum = 0;
             double durationSum = 0;
