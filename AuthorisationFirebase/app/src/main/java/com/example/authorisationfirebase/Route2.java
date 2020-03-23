@@ -3,15 +3,14 @@ package com.example.authorisationfirebase;
 public class Route2 {
 
     private City route[];
+    private Coordinates[] coordinates;
     private double distance = 0;
 
     /**
      * Initialize Route
      *
-     * @param individual
-     *            A GA individual
-     * @param cities
-     *            The cities referenced
+     * @param individual A GA individual
+     * @param cities     The cities referenced
      */
     public Route2(Individual2 individual, City cities[]) {
         // Get individual's chromosome

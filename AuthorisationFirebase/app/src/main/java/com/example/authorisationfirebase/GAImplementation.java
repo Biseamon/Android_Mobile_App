@@ -29,8 +29,8 @@ public class GAImplementation extends AsyncTask<Object,String,String> {
     private String googlePlacesData;  //String to store the JSON file.
     private GoogleMap mMap;          //Google maps.
     private String url;             //nearby places API link.
-    private LatLng[][] latlngMatrix;
     private LatLng currentLoc;
+    private String currentLocation = "Current location";
 
     public GAImplementation(LatLng latLng){
         this.currentLoc = latLng;
@@ -67,34 +67,46 @@ public class GAImplementation extends AsyncTask<Object,String,String> {
         nearbyPlaceList = parser.parse(s);       //parses the places from the JSON file.
 
         List<LatLng> listOfCoordinates = new ArrayList<>();
+        List<String> listOfNames = new ArrayList<>();
+        listOfNames.add(0,currentLocation);
+
+
+        Log.d("GANames", "onPostExecute: " + listOfNames.addAll(placeNames(nearbyPlaceList)));
+
         listOfCoordinates.add(0, currentLoc);
         listOfCoordinates.addAll(coordinates(nearbyPlaceList));
 
-        City[] latlngs = new City[listOfCoordinates.size()]; //An array of distances.
+        Coordinates[] latlngs = new Coordinates[listOfCoordinates.size()]; //An array of distances.
+        City[] latlngs1 = new City[listOfCoordinates.size()]; //An array of distances.
 
         MarkerOptions markerOptions = new MarkerOptions();
         PolylineOptions polylineOptions = new PolylineOptions();
-
-        latlngMatrix = new LatLng[listOfCoordinates.size()][listOfCoordinates.size()];
 
         for (int cityIndex = 0; cityIndex < listOfCoordinates.size(); cityIndex++) {
             for (int i = 0; i < listOfCoordinates.size(); i++) {
                 // Generate x,y position
                 LatLng xPos = listOfCoordinates.get(cityIndex);
                 LatLng yPos = listOfCoordinates.get(i);
-//                mMap.addMarker(markerOptions.position(listOfCoordinates.get(i))
-//                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-//
-//                polylineOptions.color(Color.RED);        //Sets the colour of the poly lines.
-//                polylineOptions.width(10);              //sets the width of the poly lines.
-//                polylineOptions.geodesic(true);        //boolean value (optional).
-//                polylineOptions.clickable(true);      //makes the polyline clickable.
-//                polylineOptions.add(listOfCoordinates.get(i));   //creates the poly lines.
-//                mMap.addPolyline(polylineOptions);
+                mMap.addMarker(markerOptions.position(listOfCoordinates.get(cityIndex))
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                polylineOptions.color(Color.RED);        //Sets the colour of the poly lines.
+                polylineOptions.width(10);              //sets the width of the poly lines.
+                polylineOptions.geodesic(true);        //boolean value (optional).
+                polylineOptions.clickable(true);      //makes the polyline clickable.
+               // polylineOptions.add(listOfCoordinates.get(cityIndex));   //creates the poly lines.
+                polylineOptions.addAll(listOfCoordinates);
+                mMap.addPolyline(polylineOptions);
+
                 // Add city
-                latlngs[cityIndex] = new City(xPos, yPos);
+                latlngs1[cityIndex] = new City(xPos, yPos);
             }
 
+            for (int i = 0; i < listOfCoordinates.size(); i++) {
+                LatLng latLng = listOfCoordinates.get(i);
+                latlngs[i] = new Coordinates(latLng);
+            }
+
+                mMap.addMarker(markerOptions.position(listOfCoordinates.get(0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
 
         }
 
@@ -110,9 +122,9 @@ public class GAImplementation extends AsyncTask<Object,String,String> {
         Population2 population = ga.initPopulation(latlngs.length);
 
         // Evaluate population
-        ga.evalPopulation(population, latlngs);
+        ga.evalPopulation(population, latlngs1);
 
-        Route2 startRoute = new Route2(population.getFittest(0), latlngs);
+        Route2 startRoute = new Route2(population.getFittest(0), latlngs1);
         System.out.println("Start Distance: " + startRoute.getDistance());
 
         // Keep track of current generation
@@ -121,16 +133,8 @@ public class GAImplementation extends AsyncTask<Object,String,String> {
         while (ga.isTerminationConditionMet(generation, maxGenerations) == false) {
             // Print fittest individual from population
 
-            Route2 route = new Route2(population.getFittest(0), latlngs);
+            Route2 route = new Route2(population.getFittest(0), latlngs1);
             System.out.println("G"+generation+" Best distance: " + route.getDistance());
-
-            mMap.addMarker(markerOptions.position(listOfCoordinates.get(0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-            polylineOptions.color(Color.RED);        //Sets the colour of the poly lines.
-            polylineOptions.width(10);              //sets the width of the poly lines.
-            polylineOptions.geodesic(true);        //boolean value (optional).
-            polylineOptions.clickable(true);      //makes the polyline clickable.
-            polylineOptions.addAll(listOfCoordinates);   //creates the poly lines.
-            mMap.addPolyline(polylineOptions);
 
             // Apply crossover
             population = ga.crossoverPopulation(population);
@@ -139,14 +143,14 @@ public class GAImplementation extends AsyncTask<Object,String,String> {
             population = ga.mutatePopulation(population);
 
             // Evaluate population
-            ga.evalPopulation(population, latlngs);
+            ga.evalPopulation(population, latlngs1);
 
             // Increment the current generation
             generation++;
         }
 
         System.out.println("Stopped after " + maxGenerations + " generations.");
-        Route2 route = new Route2(population.getFittest(0), latlngs);
+        Route2 route = new Route2(population.getFittest(0), latlngs1);
         System.out.println("Best distance: " + route.getDistance());
 
     }
@@ -168,10 +172,6 @@ public class GAImplementation extends AsyncTask<Object,String,String> {
             markerOptions.position(latLng);                                                                //sets the position of the marker.
             markerOptions.title(placeName + " " + latLng + place_id  + vicinity);                        //sets its title.
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)); // sets the icon.
-
-//            mMap.addMarker(markerOptions);                                //add the marker to the map.
-//            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));      //focuses the camera on the last marker.
-//            mMap.animateCamera(CameraUpdateFactory.zoomTo(15));      // zooms in on the marker.
 
             Log.d("nearbyPlacesList", googlePlace.toString().replace("{place_name=", "")); //Test/Check purpose only.
 
@@ -196,6 +196,24 @@ public class GAImplementation extends AsyncTask<Object,String,String> {
 
         }
         return listOfLatLng;
+    }
+
+    private List<String> placeNames(List<Map<String, String>> nearbyPlaceList) {
+
+        List<String> listOfNames = new ArrayList<>();
+
+        for (int i = 0; i < nearbyPlaceList.size() - 10; i++) {
+            Map<String, String> googlePlace = nearbyPlaceList.get(i);  //loops through the list of parsed places from the onPostExecute method.
+
+
+            String placeName = googlePlace.get("place_name");               //extracts the place_name.
+
+            listOfNames.add(placeName);
+
+            //Log.d("coordinates", googlePlace.toString().replace("{place_name=", "")); //Test/Check purpose only.
+
+        }
+        return listOfNames;
     }
 
 }

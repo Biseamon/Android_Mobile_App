@@ -10,6 +10,8 @@ import com.google.android.gms.maps.GoogleMap;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -126,6 +128,26 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
         List<String> placeDistances = parser.parseDistanceFromMatrix(s);  //parses distances between origin and destinations.
         List<String> placeDurations = parser.parseDurationFromMatrix(s); //parses durations between origin and destinations.
 
+        Map<List<String>, Map<List<String>,List<String>>> mapMap = new HashMap<>();
+        Map<List<String>,List<String>> map = new HashMap<>();
+        map.put(placesDestinations, placeDistances);
+        mapMap.put(placesOrigins, map);
+
+        for ( Map.Entry<List<String>, Map<List<String>, List<String>>> entry : mapMap.entrySet()) {
+            List<String> key = entry.getKey(); //origins
+            Map<List<String>, List<String>> tab = entry.getValue(); //destinations and distances
+            // do something with key and/or tab
+            System.out.println(key.toString() + " " + tab.toString());
+        }
+
+        Map<List<String>,List<String>> map1 = new LinkedHashMap<>();  // ordered
+        Map<List<String>,Map<List<String>,List<String>>> map2 = new LinkedHashMap<>();  // ordered
+        map1.put(placesDestinations, placeDistances);
+        map2.put(placesOrigins, map1);
+
+        System.out.println("Hello world" + map2.toString());
+
+        Log.d("distances", "onPostExecute: " + placeDistances.toString());
 
         elementDistanceNo1 = placeDistances.subList(0, 10);   //element of distances contains a sublist of placeDistances.
         elementDistanceNo2 = placeDistances.subList(10, 20);  //element of distances contains a sublist of placeDistances.

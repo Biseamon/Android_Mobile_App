@@ -16,7 +16,6 @@ public class City {
         this.posY = posY;
     }
 
-
     /**
      * This method is needed in cases where the
      * distance between two latitudes and longitudes
