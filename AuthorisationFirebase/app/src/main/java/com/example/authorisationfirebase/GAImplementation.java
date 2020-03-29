@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -12,10 +13,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.example.authorisationfirebase.GetDistanceMatrixData.maxGenerations;
 
 public class GAImplementation extends AsyncTask<Object,String,String> {
 
@@ -31,6 +31,7 @@ public class GAImplementation extends AsyncTask<Object,String,String> {
     private String url;             //nearby places API link.
     private LatLng currentLoc;
     private String currentLocation = "Current location";
+    public static int maxGenerations = 100; //number of generations that genetic algorithm will perform.
 
     public GAImplementation(LatLng latLng){
         this.currentLoc = latLng;
@@ -70,7 +71,6 @@ public class GAImplementation extends AsyncTask<Object,String,String> {
         List<String> listOfNames = new ArrayList<>();
         listOfNames.add(0,currentLocation);
 
-
         Log.d("GANames", "onPostExecute: " + listOfNames.addAll(placeNames(nearbyPlaceList)));
 
         listOfCoordinates.add(0, currentLoc);
@@ -80,22 +80,12 @@ public class GAImplementation extends AsyncTask<Object,String,String> {
         City[] latlngs1 = new City[listOfCoordinates.size()]; //An array of distances.
 
         MarkerOptions markerOptions = new MarkerOptions();
-        PolylineOptions polylineOptions = new PolylineOptions();
 
         for (int cityIndex = 0; cityIndex < listOfCoordinates.size(); cityIndex++) {
             for (int i = 0; i < listOfCoordinates.size(); i++) {
                 // Generate x,y position
                 LatLng xPos = listOfCoordinates.get(cityIndex);
                 LatLng yPos = listOfCoordinates.get(i);
-                mMap.addMarker(markerOptions.position(listOfCoordinates.get(cityIndex))
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                polylineOptions.color(Color.RED);        //Sets the colour of the poly lines.
-                polylineOptions.width(10);              //sets the width of the poly lines.
-                polylineOptions.geodesic(true);        //boolean value (optional).
-                polylineOptions.clickable(true);      //makes the polyline clickable.
-               // polylineOptions.add(listOfCoordinates.get(cityIndex));   //creates the poly lines.
-                polylineOptions.addAll(listOfCoordinates);
-                mMap.addPolyline(polylineOptions);
 
                 // Add city
                 latlngs1[cityIndex] = new City(xPos, yPos);
@@ -106,14 +96,25 @@ public class GAImplementation extends AsyncTask<Object,String,String> {
                 latlngs[i] = new Coordinates(latLng);
             }
 
-                mMap.addMarker(markerOptions.position(listOfCoordinates.get(0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+                mMap.addMarker(markerOptions.position(listOfCoordinates.get(0))
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
 
         }
+
+        PolylineOptions polylineOptions = new PolylineOptions();
+        polylineOptions.color(Color.RED);        //Sets the colour of the poly lines.
+        polylineOptions.width(7);              //sets the width of the poly lines.
+        polylineOptions.geodesic(true);        //boolean value (optional).
+        polylineOptions.clickable(true);
+        polylineOptions.addAll(listOfCoordinates);
+
+        mMap.addPolyline(polylineOptions);
 
         Log.d("nearbyPlacesData", nearbyPlaceList.toString()); //test purpose only.
         Log.d("coordinates", "onPostExecute: " + listOfCoordinates.toString());
 
-        showNearbyPlaces(nearbyPlaceList); //displays all the places on the map using showNearbyPlaces method down below.
+        //displays all the places on the map using showNearbyPlaces method down below.
+        showNearbyPlaces(nearbyPlaceList);
 
         // Initial GA
         GeneticAlgorithm2 ga = new GeneticAlgorithm2(100, 0.001, 0.9, 2, 5);
@@ -171,7 +172,13 @@ public class GAImplementation extends AsyncTask<Object,String,String> {
 
             markerOptions.position(latLng);                                                                //sets the position of the marker.
             markerOptions.title(placeName + " " + latLng + place_id  + vicinity);                        //sets its title.
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)); // sets the icon.
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)); // sets the icon.
+
+            mMap.addMarker(markerOptions);                                //add the marker to the map.
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));      //focuses the camera on the last marker.
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(15));      // zooms in on the marker.
+
+
 
             Log.d("nearbyPlacesList", googlePlace.toString().replace("{place_name=", "")); //Test/Check purpose only.
 
@@ -181,10 +188,12 @@ public class GAImplementation extends AsyncTask<Object,String,String> {
     private List<LatLng> coordinates(List<Map<String, String>> nearbyPlaceList) {
 
         List<LatLng> listOfLatLng = new ArrayList<>();
+        Map<String, LatLng> placeNamesAndTheirCoordinates = new HashMap<>();
 
         for (int i = 0; i < nearbyPlaceList.size() - 10; i++) {
             Map<String, String> googlePlace = nearbyPlaceList.get(i);  //loops through the list of parsed places from the onPostExecute method.
 
+            String placeName = googlePlace.get("place_name");
             double lat = Double.parseDouble(googlePlace.get("lat"));      //extracts the latitude.
             double lng = Double.parseDouble(googlePlace.get("lng"));     //extracts the longitude.
 
@@ -192,7 +201,10 @@ public class GAImplementation extends AsyncTask<Object,String,String> {
 
             listOfLatLng.add(latLng);
 
-            //Log.d("coordinates", googlePlace.toString().replace("{place_name=", "")); //Test/Check purpose only.
+            placeNamesAndTheirCoordinates.put(placeName,latLng);
+
+            Log.d("coordinates", googlePlace.toString().replace("{place_name=", "")); //Test/Check purpose only.
+            Log.d("namesCoords", "names and coordinates " + listOfLatLng.toString());
 
         }
         return listOfLatLng;
@@ -206,11 +218,11 @@ public class GAImplementation extends AsyncTask<Object,String,String> {
             Map<String, String> googlePlace = nearbyPlaceList.get(i);  //loops through the list of parsed places from the onPostExecute method.
 
 
-            String placeName = googlePlace.get("place_name");               //extracts the place_name.
+            String placeName = googlePlace.get("place_name");        //extracts the place_name.
 
             listOfNames.add(placeName);
 
-            //Log.d("coordinates", googlePlace.toString().replace("{place_name=", "")); //Test/Check purpose only.
+            Log.d("coordinates", googlePlace.toString().replace("{place_name=", "")); //Test/Check purpose only.
 
         }
         return listOfNames;

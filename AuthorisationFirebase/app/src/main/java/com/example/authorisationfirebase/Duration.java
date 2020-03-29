@@ -1,7 +1,11 @@
 package com.example.authorisationfirebase;
 
 
-    public class Duration {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class Duration {
 
         /**
          * A simple abstraction of a city. This class maintains Cartesian coordinates
@@ -23,9 +27,37 @@ package com.example.authorisationfirebase;
 
         public double durations(Duration duration){
 
-            double xAndY = duration.getX();
 
-            return xAndY;
+            double one = this.xAndY;
+            double two = duration.getXandY();
+
+            List<Double> list = new ArrayList<>();
+            list.add(one);
+            list.add(two);
+
+            double minValue = getMin(list);
+
+            return minValue;
+
+//            double firstDuration = this.xAndY;
+//            double secondDuration = duration.getXandY();
+//            double smallestDistance = Double.MAX_VALUE;
+//
+//            List<Double> list = new ArrayList<>();
+//            list.add(firstDuration);
+//            list.add(secondDuration);
+//
+//            for (int i = 0; i < list.size(); i++) {
+//                if(list.get(i) < smallestDistance){
+//                    smallestDistance = list.get(i);
+//                }
+//            }
+//
+//            return smallestDistance;
+
+//            double xAndY = duration.getX();
+//
+//            return xAndY;
         }
 
         /**
@@ -33,7 +65,7 @@ package com.example.authorisationfirebase;
          *
          * Pythagorean theorem: a^2 + b^2 = c^2
          *
-         * @param duration
+        // * @param duration
          *            The city to calculate the distance from
          * @return distance The distance from the given city
          */
@@ -47,12 +79,16 @@ package com.example.authorisationfirebase;
 //            return durations;
 //        }
 
+
+       public Double getMin(List<Double> list){
+            return Collections.min(list);
+        }
         /**
          * Get x position of city
          *
          * @return x X position of city
          */
-        public double getX() {
+        public double getXandY() {
             return this.xAndY;
         }
 

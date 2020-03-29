@@ -1,7 +1,5 @@
 package com.example.authorisationfirebase;
 
-import java.text.DecimalFormat;
-
 public class Route {
 
     private Distance route[];
@@ -9,7 +7,7 @@ public class Route {
     private double distance = 0;
     private double duration = 0;
 
-    DecimalFormat decimalFormat = new DecimalFormat("#.##"); //changes a double number format.
+    //DecimalFormat decimalFormat = new DecimalFormat("#.##"); //changes a double number format.
 
     /**
      * Initialize Route

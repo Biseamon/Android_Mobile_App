@@ -21,42 +21,40 @@ public class Distance {
 
         }
 
+
         public double distances(Distance distance){
 
+            this.xAndY = distance.getXandY();
 
-            double xAndY = distance.getX();
+
+//            double one = this.xAndY;
+//            double two = distance.getXandY();
+//            double minValue = 0;
+//
+//            List<Double> list = new ArrayList<>();
+//            list.add(one);
+//            list.add(two);
+
+
+            //double minValue = getMin(list);
+
+
+           // return minValue;
+
+
+            //this.xAndY = distance.getXandY();
+
+            double xAndY = distance.getXandY();
 
             return xAndY;
         }
-
-        /**
-         * Calculate distance from another city
-         *
-         * Pythagorean theorem: a^2 + b^2 = c^2
-         *
-         * @param distance
-         *            The city to calculate the distance from
-         * @return distance The distance from the given city
-         */
-//    public double distanceFrom(Distance distance) {
-//        // Give difference in x,y
-//        double deltaXSq = Math.pow((distance.getX() - this.getX()),2);
-//        double deltaYSq = Math.pow((distance.getY() - this.getY()),2);
-//
-//        double distances = Math.sqrt(deltaXSq + deltaYSq);
-//
-//        return distances;
-//
-//    }
-
-
 
         /**
          * Get x position of city
          *
          * @return x X position of city
          */
-        public double getX() {
+        public double getXandY() {
             return this.xAndY;
         }
 
