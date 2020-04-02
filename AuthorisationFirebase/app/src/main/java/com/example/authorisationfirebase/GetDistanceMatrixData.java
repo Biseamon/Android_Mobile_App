@@ -11,8 +11,6 @@ import com.google.android.gms.maps.GoogleMap;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +29,8 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
     private List<Map<String, String>> nearbyPlaceList; //List of nearby places. This list is dynamic and changes every time user chooses a new reference.
     private List<String> placesOrigins;               //List of origin places.
     private List<String> placesDestinations;         //List of destination places.
-    private String[][] distanceMatrix;              //distance matrix.
-    private String[][] durationMatrix;             //duration matrix.
+    private Double[][] distanceMatrix;              //distance matrix.
+    private Double[][] durationMatrix;             //duration matrix.
     private String[][] distanceMatrixDetailed;    //a more detailed distance matrix.
     private String[][] durationMatrixDetailed;   //a more detailed duration matrix.
 
@@ -49,11 +47,10 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
     private long durationMillis;      //calculates the duration between start and finish of the timer.
 
     public static int maxGenerations = 100; //number of generations that genetic algorithm will perform.
-    List<Double> distancesAAA = new ArrayList<>();
 
-
-    //public GetDistanceMatrixData(){}  //an empty constructor.
-    public GetDistanceMatrixData(TextView txtView){this.textView = txtView;}  //textView constructor.
+    public GetDistanceMatrixData(TextView txtView) {
+        this.textView = txtView;
+    }  //textView constructor.
 
     @Override
     protected String doInBackground(Object... objects) {
@@ -63,8 +60,8 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
          * download and parse process.
          */
 
-        mMap = (GoogleMap)objects[0];           //map initialisation from the MapsActivity.class
-        nearbyPlacesUrl = (String)objects[1];  //link to Places API from MapsActivity.class
+        mMap = (GoogleMap) objects[0];           //map initialisation from the MapsActivity.class
+        nearbyPlacesUrl = (String) objects[1];  //link to Places API from MapsActivity.class
 
         DownloadUrl downloadURL = new DownloadUrl();  //initialising the downloadUrl.class
         try {
@@ -72,7 +69,7 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
             Parser parser = new Parser();                                    //initialise a new parser.
             nearbyPlaceList = parser.parseDirectionData(googlePlacesData);  //parses the data from the JSON file into nearbyPlaceList.
 
-            String origins =  getOrigins(); //stores all the origin places.
+            String origins = getOrigins(); //stores all the origin places.
 
             String destinations = getDestinations();  //stores all the destination places.
 
@@ -99,6 +96,7 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
 
     /**
      * persorms actions after the doInBackground has finished its work.
+     *
      * @param s where s is finalUrl returned by the doInBackground method.
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -112,27 +110,8 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
         List<String> placeDistances = parser.parseDistanceFromMatrix(s);  //parses distances between origin and destinations.
         List<String> placeDurations = parser.parseDurationFromMatrix(s); //parses durations between origin and destinations.
 
-        Map<List<String>, Map<List<String>,List<String>>> mapMap = new HashMap<>();
-        Map<List<String>,List<String>> map = new HashMap<>();
-        map.put(placesDestinations, placeDistances);
-        mapMap.put(placesOrigins, map);
-
-        for ( Map.Entry<List<String>, Map<List<String>, List<String>>> entry : mapMap.entrySet()) {
-            List<String> key = entry.getKey(); //origins
-            Map<List<String>, List<String>> tab = entry.getValue(); //destinations and distances
-            // do something with key and/or tab
-            System.out.println(key.toString() + " " + tab.toString());
-        }
-
-        Map<List<String>,List<String>> map1 = new LinkedHashMap<>();  // ordered
-        Map<List<String>,Map<List<String>,List<String>>> map2 = new LinkedHashMap<>();  // ordered
-        map1.put(placesDestinations, placeDistances);
-        map2.put(placesOrigins, map1);
-
-        Log.d("distances", "onPostExecute: " + placeDistances.toString());
-
-        distanceMatrix = new String[placesOrigins.size()][placesDestinations.size()];  //distance matrix initialisation.
-        durationMatrix = new String[placesOrigins.size()][placesDestinations.size()];  //duration matrix initialisation.
+        distanceMatrix = new Double[placesOrigins.size()][placesDestinations.size()];  //distance matrix initialisation.
+        durationMatrix = new Double[placesOrigins.size()][placesDestinations.size()];  //duration matrix initialisation.
         distanceMatrixDetailed = new String[placesOrigins.size()][placesDestinations.size()];  //detailed distance matrix initialisation.
         durationMatrixDetailed = new String[placesOrigins.size()][placesDestinations.size()];  //detailed duration matrix initialisation.
 
@@ -143,16 +122,9 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
          */
         for (int i = 0; i < distanceMatrixDetailed.length; i++) {
             for (int j = 0; j < distanceMatrixDetailed[i].length; j++) {
-                distanceMatrixDetailed[0][j] = placeDistances.subList(0, 10).get(j);    //first 10 elements stored.
-                distanceMatrixDetailed[1][j] = placeDistances.subList(10, 20).get(j);   //second dozen of elements stored.
-                distanceMatrixDetailed[2][j] = placeDistances.subList(20, 30).get(j);  //third dozen of elements stored.
-                distanceMatrixDetailed[3][j] = placeDistances.subList(30, 40).get(j); //and so on...
-                distanceMatrixDetailed[4][j] = placeDistances.subList(40, 50).get(j);
-                distanceMatrixDetailed[5][j] = placeDistances.subList(50, 60).get(j);
-                distanceMatrixDetailed[6][j] = placeDistances.subList(60, 70).get(j);
-                distanceMatrixDetailed[7][j] = placeDistances.subList(70, 80).get(j);
-                distanceMatrixDetailed[8][j] = placeDistances.subList(80, 90).get(j);
-                distanceMatrixDetailed[9][j] = placeDistances.subList(90, 100).get(j);
+
+                distanceMatrixDetailed[i][j] = placeDistances.get(10 * i + j); //first 10 elements stored.
+
             }
         }
 
@@ -163,16 +135,9 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
          */
         for (int i = 0; i < durationMatrixDetailed.length; i++) {
             for (int j = 0; j < durationMatrixDetailed[i].length; j++) {
-                durationMatrixDetailed[0][j] = placeDurations.subList(0, 10).get(j);     //first 10 elements stored.
-                durationMatrixDetailed[1][j] = placeDurations.subList(10, 20).get(j);    //second dozen of elements stored.
-                durationMatrixDetailed[2][j] = placeDurations.subList(20, 30).get(j);   //third dozen of elements stored.
-                durationMatrixDetailed[3][j] = placeDurations.subList(30, 40).get(j);  //and so on...
-                durationMatrixDetailed[4][j] = placeDurations.subList(40, 50).get(j);
-                durationMatrixDetailed[5][j] = placeDurations.subList(50, 60).get(j);
-                durationMatrixDetailed[6][j] = placeDurations.subList(60, 70).get(j);
-                durationMatrixDetailed[7][j] = placeDurations.subList(70, 80).get(j);
-                durationMatrixDetailed[8][j] = placeDurations.subList(80, 90).get(j);
-                durationMatrixDetailed[9][j] = placeDurations.subList(90, 100).get(j);
+
+                durationMatrixDetailed[i][j] = placeDurations.get(10 * i + j); //first 10 elements stored.
+
             }
         }
 
@@ -187,34 +152,32 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
         for (int i = 0; i < distanceMatrix.length; i++) {
             for (int j = 0; j < distanceMatrix[i].length; j++) {
 
-                distanceMatrix[0][j] = placeDistances.subList(0, 10).get(j).replaceAll("[^0-9.]","");
-                distanceMatrix[1][j] = placeDistances.subList(10, 20).get(j).replaceAll("[^0-9.]","");
-                distanceMatrix[2][j] = placeDistances.subList(20, 30).get(j).replaceAll("[^0-9.]","");
-                distanceMatrix[3][j] = placeDistances.subList(30, 40).get(j).replaceAll("[^0-9.]","");
-                distanceMatrix[4][j] = placeDistances.subList(40, 50).get(j).replaceAll("[^0-9.]","");
-                distanceMatrix[5][j] = placeDistances.subList(50, 60).get(j).replaceAll("[^0-9.]","");
-                distanceMatrix[6][j] = placeDistances.subList(60, 70).get(j).replaceAll("[^0-9.]","");
-                distanceMatrix[7][j] = placeDistances.subList(70, 80).get(j).replaceAll("[^0-9.]","");
-                distanceMatrix[8][j] = placeDistances.subList(80,90).get(j).replaceAll("[^0-9.]","");
-                distanceMatrix[9][j] = placeDistances.subList(90, 100).get(j).replaceAll("[^0-9.]","");
+                distanceMatrix[i][j] = Double.parseDouble(placeDistances.get(10 * i + j).replaceAll("[^0-9.]", ""));
 
-//                double x = Double.parseDouble(distanceMatrix[i][0]);   //Stores the distances one by one in a double variable needed for Distance.class.
-//                double y = Double.parseDouble(distanceMatrix[0][j]);  //Stores the distances one by one in a double variable needed for Distance.class.
+                double distanceValue = distanceMatrix[i][j];
 
-                double xAndY2 = Double.parseDouble(distanceMatrix[i][j]);
+                if (distanceValue == 1.0) {
+                    distanceValue = 0;
+                }
+                System.out.println(distanceValue + " ");
 
-                 if(xAndY2 == 1.0){
-                    xAndY2 = 0;
-                 }
-
-                 //distancesAAA.add(xAndY2);
-
-                System.out.println(xAndY2 + "\n");
-
-              distances[j] = new Distance(xAndY2); //Creates a new object of a class containing x,y as parameters.
+                distances[j] = new Distance(distanceValue); //Creates a new object of a class containing x,y as parameters.
             }
         }
-        System.out.println(" check this out " + distancesAAA.toString());
+
+
+        Distance distance = new Distance();
+        double[] bestPath = distance.GetBestPath(distanceMatrix);
+        System.out.print("Лучший путь: ");
+        for (int i = 0; i < bestPath.length; i++) {
+            System.out.print(" " + bestPath[i]);
+        }
+        double lengthOfBestPath = distance.LengthOfPath(distanceMatrix, bestPath);
+        System.out.println();
+        System.out.println("Длина лучшего пути " + lengthOfBestPath);
+
+
+
 
 
         /**
@@ -222,20 +185,12 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
          */
         for (int i = 0; i < durationMatrix.length; i++) {
             for (int j = 0; j < durationMatrix[i].length; j++) {
-                durationMatrix[0][j] = placeDurations.subList(0, 10).get(j).replaceAll("[^0-9]","");
-                durationMatrix[1][j] = placeDurations.subList(10, 20).get(j).replaceAll("[^0-9]","");
-                durationMatrix[2][j] = placeDurations.subList(20, 30).get(j).replaceAll("[^0-9]","");
-                durationMatrix[3][j] = placeDurations.subList(30, 40).get(j).replaceAll("[^0-9]","");
-                durationMatrix[4][j] = placeDurations.subList(40, 50).get(j).replaceAll("[^0-9]","");
-                durationMatrix[5][j] = placeDurations.subList(50, 60).get(j).replaceAll("[^0-9]","");
-                durationMatrix[6][j] = placeDurations.subList(60, 70).get(j).replaceAll("[^0-9]","");
-                durationMatrix[7][j] = placeDurations.subList(70, 80).get(j).replaceAll("[^0-9]","");
-                durationMatrix[8][j] = placeDurations.subList(80, 90).get(j).replaceAll("[^0-9]","");
-                durationMatrix[9][j] = placeDurations.subList(90, 100).get(j).replaceAll("[^0-9]","");
 
-                double xAndY = Double.parseDouble(durationMatrix[i][j]);
+                durationMatrix[i][j] = Double.parseDouble(placeDurations.get(10 * i + j).replaceAll("[^0-9.]",""));
 
-                    durations[j] = new Duration(xAndY);   //Creates a new object of a class containing x,y as parameters.
+                double durationValue = durationMatrix[i][j];
+
+                    durations[j] = new Duration(durationValue);   //Creates a new object of a class containing x,y as parameters.
             }
         }
 
@@ -283,14 +238,26 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
                                                             + " " + durationMillis + " ms" + " "
                 + "Stopped after " + maxGenerations + " generations. " );
 
-        updateTxt("Genetic Algorithm " + "\n" + decimalFormat.format(route.getDistance()) + " km " + "\n" +
-                       decimalFormat.format(route.getDuration()) + " min " + "\n" +
-                       durationMillis + " ms" ); //updates the textView field by adding total distance, duration and processing time.
+
+//        updateTxt("Genetic Algorithm " + "\n" + decimalFormat.format(route.getDistance()) + " km " + "\n" +
+//                       decimalFormat.format(route.getDuration()) + " min " + "\n" +
+//                       durationMillis + " ms" ); //updates the textView field by adding total distance, duration and processing time.
+//
 
 
-        //System.out.print(getAllDistancesAndDurations());   //print out all the origins and destinations with their distances and duration. Each pair of origin and destination will have its corresponding time and distance.
+        System.out.println(placeDistances.toString());
+
+        System.out.println(placeDurations.toString());
+
+        TSP tsp = new TSP();
+        tsp.main(placesOrigins, placeDistances, placeDurations);
+
+        updateTxt(tsp.getDetailsGA());
+
+        mMap.clear();
 
     }
+
 
     //Updates the textView field.
     public void updateTxt(String data){

@@ -1,10 +1,12 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
+
 android {
 
-
     compileSdkVersion 28
+
+
     defaultConfig {
         applicationId "com.example.authorisationfirebase"
         minSdkVersion 21

@@ -2,7 +2,7 @@ package com.example.authorisationfirebase;
 
 import java.util.Arrays;
 
-public class GeneticAlgorithm {
+public class GeneticAlgorithm3 {
 
     private int populationSize;
     private double mutationRate;
@@ -10,8 +10,8 @@ public class GeneticAlgorithm {
     private int elitismCount;
     protected int tournamentSize;
 
-    public GeneticAlgorithm(int populationSize, double mutationRate, double crossoverRate, int elitismCount,
-                            int tournamentSize) {
+    public GeneticAlgorithm3(int populationSize, double mutationRate, double crossoverRate, int elitismCount,
+                             int tournamentSize) {
 
         this.populationSize = populationSize;
         this.mutationRate = mutationRate;
@@ -27,13 +27,12 @@ public class GeneticAlgorithm {
      * @param chromosomeLength The length of the individuals chromosome
      * @return population The initial population generated
      */
-    public Population initPopulation(int chromosomeLength, int chromosomeLength1){
+    public Population3 initPopulation(int chromosomeLength){
         // Initialize population
-        Population population = new Population(this.populationSize, chromosomeLength,
-                                               this.populationSize, chromosomeLength1);
-
+        Population3 population = new Population3(this.populationSize, chromosomeLength);
         return population;
     }
+
     /**
      * Check if population has met termination condition -- this termination
      * condition is a simple one; simply check if we've exceeded the allowed
@@ -57,16 +56,15 @@ public class GeneticAlgorithm {
      *
      * @param individual
      *            the individual to evaluate
-     * @param distances
+     * @param cities
      *            the cities being referenced
      * @return double The fitness value for individual
      */
-    public double calcFitness(Individual individual, Distance distances[], Duration duration[]){
+    public double calcFitness(Individual3 individual, City3 cities[]){
         // Get fitness
-        Route route = new Route(individual, distances, duration);
+        Route3 route = new Route3(individual, cities);
         double fitness = 1 / route.getDistance();
-        double fitness1 = 1 / route.getDuration();
-        double sum = fitness + fitness1;
+
         // Store fitness
         individual.setFitness(fitness);
 
@@ -75,15 +73,16 @@ public class GeneticAlgorithm {
 
     /**
      * Evaluate population -- basically run calcFitness on each individual.
-     *  @param population the population to evaluate
-     * @param distances the cities being referenced
+     *
+     * @param population the population to evaluate
+     * @param cities the cities being referenced
      */
-    public void evalPopulation(Population population, Distance[] distances, Duration[] duration){
+    public void evalPopulation(Population3 population, City3 cities[]){
         double populationFitness = 0;
 
         // Loop over population evaluating individuals and summing population fitness
-        for (Individual individual : population.getIndividuals()) {
-            populationFitness += this.calcFitness(individual, distances, duration);
+        for (Individual3 individual : population.getIndividuals()) {
+            populationFitness += this.calcFitness(individual, cities);
         }
 
         double avgFitness = populationFitness / population.size();
@@ -99,14 +98,14 @@ public class GeneticAlgorithm {
      *
      * @return The individual selected as a parent
      */
-    public Individual selectParent(Population population) {
+    public Individual3 selectParent(Population3 population) {
         // Create tournament
-        Population tournament = new Population(this.tournamentSize);
+        Population3 tournament = new Population3(this.tournamentSize);
 
         // Add random individuals to the tournament
         population.shuffle();
         for (int i = 0; i < this.tournamentSize; i++) {
-            Individual tournamentIndividual = population.getIndividual(i);
+            Individual3 tournamentIndividual = population.getIndividual(i);
             tournament.setIndividual(i, tournamentIndividual);
         }
 
@@ -136,24 +135,24 @@ public class GeneticAlgorithm {
      * @param population
      * @return The new population
      */
-    public Population crossoverPopulation(Population population){
+    public Population3 crossoverPopulation(Population3 population){
         // Create new population
-        Population newPopulation = new Population(population.size());
+        Population3 newPopulation = new Population3(population.size());
 
         // Loop over current population by fitness
         for (int populationIndex = 0; populationIndex < population.size(); populationIndex++) {
             // Get parent1
-            Individual parent1 = population.getFittest(populationIndex);
+            Individual3 parent1 = population.getFittest(populationIndex);
 
             // Apply crossover to this individual?
             if (this.crossoverRate > Math.random() && populationIndex >= this.elitismCount) {
                 // Find parent2 with tournament selection
-                Individual parent2 = this.selectParent(population);
+                Individual3 parent2 = this.selectParent(population);
 
                 // Create blank offspring chromosome
                 int offspringChromosome[] = new int[parent1.getChromosomeLength()];
                 Arrays.fill(offspringChromosome, -1);
-                Individual offspring = new Individual(offspringChromosome);
+                Individual3 offspring = new Individual3(offspringChromosome);
 
                 // Get subset of parent chromosomes
                 int substrPos1 = (int) (Math.random() * parent1.getChromosomeLength());
@@ -210,13 +209,13 @@ public class GeneticAlgorithm {
      *            The population to apply mutation to
      * @return The mutated population
      */
-    public Population mutatePopulation(Population population){
+    public Population3 mutatePopulation(Population3 population){
         // Initialize new population
-        Population newPopulation = new Population(this.populationSize);
+        Population3 newPopulation = new Population3(this.populationSize);
 
         // Loop over current population by fitness
         for (int populationIndex = 0; populationIndex < population.size(); populationIndex++) {
-            Individual individual = population.getFittest(populationIndex);
+            Individual3 individual = population.getFittest(populationIndex);
 
             // Skip mutation if this is an elite individual
             if (populationIndex >= this.elitismCount) {
@@ -245,4 +244,5 @@ public class GeneticAlgorithm {
         // Return mutated population
         return newPopulation;
     }
+
 }

@@ -11,13 +11,11 @@ public class Route {
 
     /**
      * Initialize Route
-     *
-     * @param individual
+     *  @param individual
      *            A GA individual
      * @param distances
-     *            The cities referenced
      */
-    public Route(Individual individual, Distance distances[], Duration durations[]) {
+    public Route(Individual individual, Distance[] distances, Duration[] durations) {
         // Get individual's chromosome
         int chromosome[] = individual.getChromosome();
         // Create route
@@ -43,11 +41,11 @@ public class Route {
         double totalDistance = 0;
 
         for (int cityIndex = 0; cityIndex + 1 < this.route.length; cityIndex++) {
-            totalDistance += this.route[cityIndex].distances(this.route[cityIndex + 1]);
+            totalDistance += this.route[cityIndex].distanceValues(this.route[cityIndex + 1]);
             //System.out.println(num + " " + "Distance " + decimalFormat.format(totalDistance));
         }
 
-        totalDistance += this.route[this.route.length - 1].distances(  this.route[0]);
+        totalDistance += this.route[this.route.length - 1].distanceValues(this.route[0]);
         this.distance = totalDistance;
 
         return totalDistance;
