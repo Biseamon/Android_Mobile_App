@@ -1,7 +1,6 @@
 package com.example.authorisationfirebase;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,6 +24,7 @@ class GetNearbyPlaces extends AsyncTask<Object, String, String> {
     private String googlePlacesData;  //String to store the JSON file.
     private GoogleMap mMap;          //Google maps.
     private String url;             //nearby places API link.
+
 
 
     @Override
@@ -62,10 +62,11 @@ class GetNearbyPlaces extends AsyncTask<Object, String, String> {
         Parser parser = new Parser();             // a new Parser.
         nearbyPlaceList = parser.parse(s);       //parses the places from the JSON file.
 
-        Log.d("nearbyPlacesData", nearbyPlaceList.toString()); //test purpose only.
+        //Log.d("nearbyPlacesData", nearbyPlaceList.toString()); //test purpose only.
 
         showNearbyPlaces(nearbyPlaceList); //displays all the places on the map using showNearbyPlaces method down below.
     }
+
 
     /**
      * This method shows the nearby places as markers on the map.
@@ -73,7 +74,7 @@ class GetNearbyPlaces extends AsyncTask<Object, String, String> {
      * information. For instance: name of the place, place_id, LatLng...
      * @param nearbyPlaceList
      */
-    private void showNearbyPlaces(List<Map<String, String>> nearbyPlaceList) {
+    public void showNearbyPlaces(List<Map<String, String>> nearbyPlaceList) {
 
         for (int i = 0; i < nearbyPlaceList.size() - 10; i++) {
             MarkerOptions markerOptions = new MarkerOptions();          //initialise the MarkerOption.class.
@@ -95,9 +96,10 @@ class GetNearbyPlaces extends AsyncTask<Object, String, String> {
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));      //focuses the camera on the last marker.
             mMap.animateCamera(CameraUpdateFactory.zoomTo(15));      // zooms in on the marker.
 
-            Log.d("nearbyPlacesList", googlePlace.toString().replace("{place_name=", "")); //Test/Check purpose only.
+           // Log.d("nearbyPlacesList", googlePlace.toString().replace("{place_name=", "")); //Test/Check purpose only.
 
         }
     }
+
 
 }

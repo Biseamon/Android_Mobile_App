@@ -1,16 +1,20 @@
 package com.example.authorisationfirebase;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.List;
 
 public class City3 {
 
     int index;
     String name;
+    LatLng latLng;
     double[] distances;
     double[] durations;
 
-    public City3(int index, String name, List<String> distanceData, List<String> durationData) {
+    public City3(int index, LatLng latLng, String name, List<String> distanceData, List<String> durationData) {
         this.index = index;
+        this.latLng = latLng;
         this.name = name;
         processDistances(distanceData);
         processDurations(durationData);
@@ -49,23 +53,7 @@ public class City3 {
         return durations[city.index];
     }
 
-//    /**
-//     * Get x position of city
-//     *
-//     * @return x X position of city
-//     */
-//    public int getX() {
-//        return this.x;
-//    }
 
-    //    /**
-//     * Get y position of city
-//     *
-//     * @return y Y position of city
-//     */
-//    public int getY() {
-//        return this.y;
-//    }
     @Override
     public String toString() {
         return "" + index;

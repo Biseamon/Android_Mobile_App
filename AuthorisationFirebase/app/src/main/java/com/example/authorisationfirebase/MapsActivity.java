@@ -1,11 +1,9 @@
 package com.example.authorisationfirebase;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -115,7 +113,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .replace("}", "")
                     .replace("=", ""), Toast.LENGTH_SHORT).show();
 
-            Log.i(TAG, listOfPreferences.toString());
+            //Log.i(TAG, listOfPreferences.toString());
 
         });
         return documentReference;  //returns a ready collection for use.
@@ -155,7 +153,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             String url = getUrl(lat, lng, (String) placeType, minPrice, maxPrice); //nearbyPlaces url (Places API).
 
             final  String TAG1= "TAG1";   //Tag for logs.
-            Log.i(TAG1, placeType.toString() + " " + minPrice + maxPrice); //Test/Check the results.
+            //Log.i(TAG1, placeType.toString() + " " + minPrice + maxPrice); //Test/Check the results.
 
             mMap.clear(); //Clear the map.
             dataTransfer[0] = mMap;  //Use one of the objects to pass the google maps value into it.
@@ -193,7 +191,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     dataTransfer[2] = currentLoc;
 
                     final  String TAG2= "TAG2";  //tag for logs.
-                    Log.i(TAG2, placeType.toString() + " " + minPrice + maxPrice); //test/check the result.
+                    //Log.i(TAG2, placeType.toString() + " " + minPrice + maxPrice); //test/check the result.
 
                     mMap.clear(); //clear the map.
                     mMap.addMarker(new MarkerOptions().position(currentLoc).title("Current Location")); //title for the marker.
@@ -229,9 +227,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 dataTransfer[1] = url;   //transfers the second object containing the Places API link.
                 getDistanceMatrixData.execute(dataTransfer);
 
-                Log.i("placesApi", "Places API " + url);  //test/check the Places API result.
+               // Log.i("placesApi", "Places API " + url);  //test/check the Places API result.
 
-                startActivity(new Intent(getApplicationContext(),GAMaps.class));
+                //startActivity(new Intent(getApplicationContext(),GAMaps.class));
 
             }
         });
@@ -263,7 +261,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         googlePlaceUrl.append("&maxprice=" +maxPrice);
         googlePlaceUrl.append("&key="+"AIzaSyCuRGuOxVFfA2rs5gT-w2Y8K_RSlgzualg"); //API_KEY is supposed to be personal and unique. Do not share it.
 
-        Log.d("MapsActivity", "url = "+googlePlaceUrl);
+        //Log.d("MapsActivity", "url = "+googlePlaceUrl);
 
         return googlePlaceUrl.toString();  //returns a fully constructed link.
     }

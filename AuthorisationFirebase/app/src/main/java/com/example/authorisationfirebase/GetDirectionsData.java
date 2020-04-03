@@ -40,6 +40,8 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
     private TextView textView;
     private LatLng currentLoc;
 
+    List<LatLng> start_LatLng_list = new ArrayList<>();  //a list made of start_latLng.
+
     GetDirectionsData(TextView txtView){
         this.textView = txtView;  //constructor
     }
@@ -70,6 +72,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
             distanceUrl = getDistanceUrl(currentLoc.toString().replace("lat/lng:","").replace("(","").replace(")","").replace(" ","")
                     ,currentLoc.toString().replace("lat/lng:","").replace("(","").replace(")","").replace(" ",""),getPlacesId(listOfWaypoints));  //Finally formed the Directions API link.
 
+            Log.d("lats", "doInBackground: "    + distanceUrl);
             DownloadUrl downloadUrl1 = new DownloadUrl();
             finalUrl = "";
             try {
@@ -78,11 +81,11 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
                 e.printStackTrace();
             }
 
-            Log.i("directionAPIResult", "" + finalUrl); //For test/check purpose.
+           // Log.i("directionAPIResult", "" + finalUrl); //For test/check purpose.
 
         } catch (IOException | RuntimeException e) {
 
-            Log.d("errorDirectionApi", "doInBackground: " + e);
+            //Log.d("errorDirectionApi", "doInBackground: " + e);
             e.printStackTrace();
 
         }
@@ -95,8 +98,10 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
         parseDirection(s); //returns the shortest route between nearby places. It uses Directions API.
 
-        Log.i("parseDirections", "onPostExecute: " + s);  // For test/check purpose only.
+        //Log.i("parseDirections", "onPostExecute: " + s);  // For test/check purpose only.
     }
+
+
 
     /**
      *A method that returns data from a API call such as starting points, distances
@@ -121,8 +126,6 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
         String distanceAndDuration;  //String that contains information that will be displayed on the screen.
 
         LatLng start_latLng;  //contains coordinates start_lat and start_lng.
-
-        List<LatLng> start_LatLng_list = new ArrayList<>();  //a list made of start_latLng.
 
         String point; //poly line point
 
@@ -219,7 +222,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
         } catch (JSONException e) {
 
-            Log.d("errorParserDirection", "" + e);  //To check why error.
+           // Log.d("errorParserDirection", "" + e);  //To check why error.
 
         }
 
@@ -274,10 +277,10 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
             placesIdList.add(placesIds.get(i));
 
-            Log.i("listOfPlacesById", placesIdList.toString() //To check in the log if the method returns the right amount of places.
-                    .replace("=",":")
-                    .replace("{","")
-                    .replace("}","")+ "|");
+//            Log.i("listOfPlacesById", placesIdList.toString() //To check in the log if the method returns the right amount of places.
+//                    .replace("=",":")
+//                    .replace("{","")
+//                    .replace("}","")+ "|");
         }
 
         return placesIdList.toString().replace("[", "") //returns the list of places. Also regex is used to remove brackets and spaces from the map.
@@ -286,7 +289,9 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
                 .replace("}", "")
                 .replace("=", ":")
                 .replace(" ", "")
-                .replace(",", "|");
+                .replace(",", "|")
+                .replace("!", ",")
+                .replace("latLngs:", "");
     }
 }
 

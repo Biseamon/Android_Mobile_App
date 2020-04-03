@@ -1,5 +1,7 @@
 package com.example.authorisationfirebase;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -7,8 +9,11 @@ public class TSP {
 
 
     public static int maxGenerations = 100;
-    public  List<String> cities;
+    //public  List<String> cities;
     public String data;
+
+    private String getRoute;
+    private List<LatLng> getRouteLatLng;
 
     DecimalFormat decimalFormat = new DecimalFormat("#.##"); //changes a double number format.
 
@@ -19,10 +24,11 @@ public class TSP {
 
     public TSP(){}
 
-    public void main(List<String> cityNames, List<String> distances, List<String> durations) {
+    public void main(List<LatLng> listOfLatLngs, List<String> cityNames, List<String> distances, List<String> durations) {
 
         // check for consistency
-        if (cityNames.size() * cityNames.size() != distances.size() && cityNames.size() * cityNames.size() != durations.size()) {
+        if (cityNames.size() * cityNames.size() != distances.size()
+                && cityNames.size() * cityNames.size() != durations.size()) {
             throw new RuntimeException("data do not match!");
         }
 
@@ -33,7 +39,7 @@ public class TSP {
         // Loop to create random cities
         for (int i = 0; i < numCities; i++) {
             // Add city
-            cities[i] = new City3(i, cityNames.get(i), distances.subList(i * numCities, (i + 1) * numCities), durations.subList(i * numCities, (i + 1) * numCities));
+            cities[i] = new City3(i, listOfLatLngs.get(i), cityNames.get(i), distances.subList(i * numCities, (i + 1) * numCities), durations.subList(i * numCities, (i + 1) * numCities));
         }
 
         startTimeDistance = System.currentTimeMillis(); //starts the timer.
@@ -57,7 +63,7 @@ public class TSP {
             // Print fittest individual from population
             Route3 route = new Route3(population.getFittest(0), cities);
             System.out.println("G" + generation + "  route: " + route + " Best distance: " + route.getDistance() +
-                               " " + route.getDuration());
+                               " " + route.getDuration() + route.getLatLngRoute().toString());
 
             // Apply crossover
             population = ga.crossoverPopulation(population);
@@ -75,7 +81,10 @@ public class TSP {
         System.out.println("Stopped after " + maxGenerations + " generations.");
         Route3 route = new Route3(population.getFittest(0), cities);
         System.out.println("Best distance: " + route.getDistance() + " " + route.getDuration() + "\n"
-                           + route.toString());
+                           + route.toString() +" " + population.getPopulationFitness());
+
+        setRoute(route.toString());
+        setRouteLatLng(route.getLatLngRoute());
 
         endTimeDistance = System.currentTimeMillis();  //stops the timer.
 
@@ -85,10 +94,29 @@ public class TSP {
                 + " km " + "\n" + decimalFormat.format(route.getDuration())  + " min " + "\n" +
                 durationMillis + " ms"; //updates the textView field by adding total distance, duration and processing time.
 
+
+    }
+
+    public String setRoute(String route){
+        this.getRoute = route;
+        return route;
+    }
+
+    public String getRoute(){
+        return this.getRoute;
     }
 
     public String getDetailsGA(){
         return this.data;
+    }
+
+    public List<LatLng> getRouteLatLng(){
+        return this.getRouteLatLng;
+    }
+
+    public List<LatLng> setRouteLatLng(List<LatLng> route){
+        this.getRouteLatLng = route;
+        return route;
     }
 
 

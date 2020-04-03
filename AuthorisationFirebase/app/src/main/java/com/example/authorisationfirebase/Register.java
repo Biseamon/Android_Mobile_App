@@ -3,7 +3,6 @@ package com.example.authorisationfirebase;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -109,12 +108,12 @@ public class Register extends AppCompatActivity {
                         documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "onSuccess: user Profile is created for "+ userID);
+                               // Log.d(TAG, "onSuccess: user Profile is created for "+ userID);
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "onFailure: " + e.toString());
+                               // Log.d(TAG, "onFailure: " + e.toString());
                             }
                         });
                         startActivity(new Intent(getApplicationContext(),Preferences.class)); //starts the preferences activity if successfully registered.

@@ -1,5 +1,10 @@
 package com.example.authorisationfirebase;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Route3 {
 
     private City3[] route;
@@ -79,13 +84,27 @@ public class Route3 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < route.length; i++)
+        for (int i = 0; i < route.length; i++) {
 
-        sb.append(route[i] + "(" + route[i].name + ")");
-        sb.append(":  " + distance);
-        sb.append(":  " + duration);
+            sb.append(route[i] + "(" + route[i].name + ")" );
+            //sb.append(":  " + route[i].latLng);
+            sb.append(":  " + distance);
+            sb.append(":  " + duration);
+        }
 
         return sb.toString();
     }
+
+    public List<LatLng> getLatLngRoute(){
+
+        List<LatLng> list = new ArrayList<>();
+
+        for (int i = 0; i < route.length; i++) {
+            list.add(route[i].latLng);
+        }
+        return list;
+    }
+
+
 
 }

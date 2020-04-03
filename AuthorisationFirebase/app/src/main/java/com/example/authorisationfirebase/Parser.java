@@ -1,7 +1,5 @@
 package com.example.authorisationfirebase;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,14 +30,14 @@ public class Parser {
         JSONArray jsonArray = new JSONArray(); //new JSON Array.
         JSONObject jsonObject;
 
-        Log.d("json_data", jsonData); //checks the parameter.
+        //Log.d("json_data", jsonData); //checks the parameter.
 
         try {
             jsonObject = new JSONObject(jsonData);
             jsonArray = jsonObject.getJSONArray("results"); //extracts the JSON array called "results".
 
         } catch (JSONException e) {
-           Log.d("Error_parse ",  "Error " + e);
+           //Log.d("Error_parse ",  "Error " + e);
         }
         return getPlaces(jsonArray);  //uses a method getPlaces() as a return. The method takes a JSON array as parameter and returns a List<Map<String,String>>.
     }
@@ -55,14 +53,14 @@ public class Parser {
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject;
 
-        Log.d("json data1", jsonData); //check the parameter.
+        //Log.d("json data1", jsonData); //check the parameter.
 
         try {
             jsonObject = new JSONObject(jsonData);
             jsonArray = jsonObject.getJSONArray("results");
 
         } catch (JSONException e) {
-            Log.d("Error_parseDirections ",  "Error " + e); //Check the error.
+            //Log.d("Error_parseDirections ",  "Error " + e); //Check the error.
         }
         return getPlacesIdFromJSONArray(jsonArray); //it returns a method that takes as parameter a JSON array and returns a List<Map<String,String>>.
     }
@@ -100,16 +98,27 @@ public class Parser {
 
         Map<String, String> idPlaces = new HashMap<>(); //new HashMap.
         String placesIds = "";                         //An empty string.
+        String latitude;                               //latitude
+        String longitude;                              //longitude
+        String latLng;
 
         try {
             if (!placeIdObj.isNull("name")) {                   //checks the JSON file for name variables.
                 placesIds = placeIdObj.getString("place_id");  //if is not null then we get the string called "place_id".
             }
 
+            latitude = String.valueOf(Double.parseDouble(placeIdObj.getJSONObject("geometry").getJSONObject("location").getString("lat")));   //takes the coordinates.
+            longitude = String.valueOf(Double.parseDouble(placeIdObj.getJSONObject("geometry").getJSONObject("location").getString("lng"))); //takes the coordinates.
+
+            latLng = latitude + "!" + longitude;
+
+            idPlaces.put("latLngs", latLng);                 //put the results into a Map.
+
+
         }catch(JSONException e){
-            Log.d("Error_getPlaceId",  "Error " + e); //checks the error.
+            //Log.d("Error_getPlaceId",  "Error " + e); //checks the error.
         }
-        idPlaces.put("place_id", placesIds);                 //put the results into a Map.
+
 
         return idPlaces;                                  //returns the map containing the places id.
     }
@@ -132,7 +141,7 @@ public class Parser {
                 placeMap = getPlace((JSONObject) jsonArray.get(i));  //uses getPlace() method to get one place per iteration.
                 placeList.add(placeMap);
             } catch (JSONException e) {
-                Log.d("Error_getPlaces",  "Error " + e); //checks the error.
+                //Log.d("Error_getPlaces",  "Error " + e); //checks the error.
             }
         }
         return placeList; //returns a list of places.
@@ -153,7 +162,7 @@ public class Parser {
         String longitude="";                              //longitude
         String place_id="";                              //place id
 
-        Log.d("getPlace","" + googlePlaceJson.toString());           //check the json file entered as parameter for this method.
+        //Log.d("getPlace","" + googlePlaceJson.toString());           //check the json file entered as parameter for this method.
 
         try {
             if (!googlePlaceJson.isNull("name")) {

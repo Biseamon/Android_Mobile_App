@@ -135,7 +135,7 @@ public class Preferences extends AppCompatActivity {
             documentReference.set(selectedPlaces).addOnSuccessListener(aVoid -> Log.d(TAG, "onSuccess: user Profile is created for "+ userId)).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Log.d(TAG, "onFailure: " + e.toString());
+                    //Log.d(TAG, "onFailure: " + e.toString());
                 }
             });
         });
