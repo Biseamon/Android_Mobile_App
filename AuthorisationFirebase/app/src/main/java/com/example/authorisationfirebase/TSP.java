@@ -1,5 +1,7 @@
 package com.example.authorisationfirebase;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DecimalFormat;
@@ -9,7 +11,6 @@ public class TSP {
 
 
     public static int maxGenerations = 100;
-    //public  List<String> cities;
     public String data;
 
     private String getRoute;
@@ -62,8 +63,8 @@ public class TSP {
         while (ga.isTerminationConditionMet(generation, maxGenerations) == false) {
             // Print fittest individual from population
             Route3 route = new Route3(population.getFittest(0), cities);
-            System.out.println("G" + generation + "  route: " + route + " Best distance: " + route.getDistance() +
-                               " " + route.getDuration() + route.getLatLngRoute().toString());
+            System.out.println("G" + generation + "  route: " + route + " Best results: " + route.getDistance()+ " km " +
+                               " " + route.getDuration() + " mins " + population.getPopulationFitness());
 
             // Apply crossover
             population = ga.crossoverPopulation(population);
@@ -79,9 +80,14 @@ public class TSP {
         }
 
         System.out.println("Stopped after " + maxGenerations + " generations.");
+
         Route3 route = new Route3(population.getFittest(0), cities);
-        System.out.println("Best distance: " + route.getDistance() + " " + route.getDuration() + "\n"
-                           + route.toString() +" " + population.getPopulationFitness());
+
+        System.out.println("Best results: " + route.getDistance() + " km " + route.getDuration() + " mins " + "\n"
+                           + route.getNamesOfTheRoute() + " " + population.getPopulationFitness());
+
+        Log.i("BestResult", "" + "Best results: " + route.getDistance() + " km " + route.getDuration() + " mins " + "\n"
+                + route.getNamesOfTheRoute() + " " + population.getPopulationFitness());
 
         setRoute(route.toString());
         setRouteLatLng(route.getLatLngRoute());

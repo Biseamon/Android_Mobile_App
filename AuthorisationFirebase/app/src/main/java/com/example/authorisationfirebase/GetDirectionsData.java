@@ -45,6 +45,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
     GetDirectionsData(TextView txtView){
         this.textView = txtView;  //constructor
     }
+    GetDirectionsData(){}
 
     @Override
     protected String doInBackground(Object... objects) {
@@ -58,6 +59,8 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
         mMap = (GoogleMap) objects[0];          //here the map is loaded in the background after the request from the MapsActivity.class was made.
         nearbyPlacesUrl = (String) objects[1]; //here the nearbyPlacesUrl that returns nearby places is used in order extract from it data needed for Directions API.
         currentLoc = (LatLng) objects[2];
+
+        setCurrentLocation(currentLoc);
 
         DownloadUrl downloadUrl = new DownloadUrl();
         try {
@@ -233,6 +236,15 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
         textView.setText(data);
     }
 
+    public LatLng setCurrentLocation(LatLng currentLocation){
+        this.currentLoc = currentLocation;
+        return currentLocation;
+    }
+
+    public LatLng getCurrentLocation(){
+        return this.currentLoc;
+    }
+
     /**
      *
      * @param origin
@@ -273,7 +285,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
         List<Map<String,String>> placesIdList = new ArrayList<>();
 
-        for (int i = 0; i < placesIds.size() - 10; i++) {
+        for (int i = 0; i < placesIds.size() - 11; i++) {
 
             placesIdList.add(placesIds.get(i));
 

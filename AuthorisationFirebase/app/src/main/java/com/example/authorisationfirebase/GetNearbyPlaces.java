@@ -76,7 +76,7 @@ class GetNearbyPlaces extends AsyncTask<Object, String, String> {
      */
     public void showNearbyPlaces(List<Map<String, String>> nearbyPlaceList) {
 
-        for (int i = 0; i < nearbyPlaceList.size() - 10; i++) {
+        for (int i = 0; i < nearbyPlaceList.size() - 11; i++) {
             MarkerOptions markerOptions = new MarkerOptions();          //initialise the MarkerOption.class.
             Map<String, String> googlePlace = nearbyPlaceList.get(i);  //loops through the list of parsed places from the onPostExecute method.
 

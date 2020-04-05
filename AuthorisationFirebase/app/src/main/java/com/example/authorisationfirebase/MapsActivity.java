@@ -89,7 +89,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         generateRoute = findViewById(R.id.generate);     //links generateRoute to generate in XML.
 
          getDocument();      //getDocument method.
-         gaButtonOnClick(); //gaButtonOnClick method.
+         //gaButtonOnClick(); //gaButtonOnClick method.
 
     }
 
@@ -202,6 +202,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             });
 
+            geneticAlgorithm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    // Initialises the GetDistanceMatrix.class.
+                    GetDistanceMatrixData getDistanceMatrixData = new GetDistanceMatrixData(distanceAndDuration2);
+                    Object[] dataTransfer = new Object[3];  //prepares two objects for data transfer.
+
+                    lat =  location.getLatitude();//40.706804;   //this finds the current latitude the device is located at. The latitude can be entered manually too.
+                    lng = location.getLongitude(); //-73.620917; //this finds the current longitude the device is located at. The longitude can be entered manually too.
+                    LatLng currentLoc = new LatLng(lat, lng);  //lat + lng
+
+                    Object placeType = listOfPreferences.get("PlaceType");        //Place type object.
+                    Object minPrice =  listOfPreferences.get("PlaceMinPrice");   //minPrice object.
+                    Object maxPrice =  listOfPreferences.get("PlaceMaxPrice");  //maxPrice object.
+
+                    String url = getUrl(lat, lng, (String) placeType, minPrice, maxPrice); //Places API link.
+                    dataTransfer[0] = mMap;   //transfer the first object containing the google maps.
+                    dataTransfer[1] = url;   //transfers the second object containing the Places API link.
+                    dataTransfer[2] = currentLoc;
+
+                    getDistanceMatrixData.execute(dataTransfer);
+
+                    // Log.i("placesApi", "Places API " + url);  //test/check the Places API result.
+
+                    //startActivity(new Intent(getApplicationContext(),GAMaps.class));
+
+                }
+            });
+
         });
     }
 
@@ -209,31 +239,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * Method that sets on click listener
      * for the genetic algorithm button.
      */
-    public void gaButtonOnClick() {
-        geneticAlgorithm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-               // Initialises the GetDistanceMatrix.class.
-                GetDistanceMatrixData getDistanceMatrixData = new GetDistanceMatrixData(distanceAndDuration2);
-                Object[] dataTransfer = new Object[2];  //prepares two objects for data transfer.
-
-                Object placeType = listOfPreferences.get("PlaceType");        //Place type object.
-                Object minPrice =  listOfPreferences.get("PlaceMinPrice");   //minPrice object.
-                Object maxPrice =  listOfPreferences.get("PlaceMaxPrice");  //maxPrice object.
-
-                String url = getUrl(lat, lng, (String) placeType, minPrice, maxPrice); //Places API link.
-                dataTransfer[0] = mMap;   //transfer the first object containing the google maps.
-                dataTransfer[1] = url;   //transfers the second object containing the Places API link.
-                getDistanceMatrixData.execute(dataTransfer);
-
-               // Log.i("placesApi", "Places API " + url);  //test/check the Places API result.
-
-                //startActivity(new Intent(getApplicationContext(),GAMaps.class));
-
-            }
-        });
-    }
+//    public void gaButtonOnClick() {
+//        geneticAlgorithm.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//               // Initialises the GetDistanceMatrix.class.
+//                GetDistanceMatrixData getDistanceMatrixData = new GetDistanceMatrixData(distanceAndDuration2);
+//                Object[] dataTransfer = new Object[2];  //prepares two objects for data transfer.
+//
+//                Object placeType = listOfPreferences.get("PlaceType");        //Place type object.
+//                Object minPrice =  listOfPreferences.get("PlaceMinPrice");   //minPrice object.
+//                Object maxPrice =  listOfPreferences.get("PlaceMaxPrice");  //maxPrice object.
+//
+//                String url = getUrl(lat, lng, (String) placeType, minPrice, maxPrice); //Places API link.
+//                dataTransfer[0] = mMap;   //transfer the first object containing the google maps.
+//                dataTransfer[1] = url;   //transfers the second object containing the Places API link.
+//
+//                getDistanceMatrixData.execute(dataTransfer);
+//
+//               // Log.i("placesApi", "Places API " + url);  //test/check the Places API result.
+//
+//                //startActivity(new Intent(getApplicationContext(),GAMaps.class));
+//
+//            }
+//        });
+//    }
 
 
     /**
@@ -250,7 +281,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public String getUrl(double latitude , double longitude , String nearbyPlace, Object minPrice, Object maxPrice)
     {
 
-        int placeRadius = 1000; //sets the radius of the search.
+        int placeRadius = 2000; //sets the radius of the search.
 
         StringBuilder googlePlaceUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/textsearch/json?");
         googlePlaceUrl.append("query="+nearbyPlace);

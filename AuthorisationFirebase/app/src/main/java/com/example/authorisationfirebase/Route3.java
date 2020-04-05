@@ -83,14 +83,18 @@ public class Route3 {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-
+        String[] firstAndLastPlace = null;
         for (int i = 0; i < route.length; i++) {
 
-            sb.append(route[i] + "(" + route[i].name + ")" );
-            //sb.append(":  " + route[i].latLng);
-            sb.append(":  " + distance);
-            sb.append(":  " + duration);
+            String[] shortNames = route[i].name.split("-");
+             firstAndLastPlace = route[0].name.split("-");
+
+            sb.append(" " + "-" + route[i] + "-" +  "[" + shortNames[0] + "]");
+
+//            sb.append(":  " + distance);
+//            sb.append(":  " + duration);
         }
+        sb.append(" " + "-0-" + "[" + firstAndLastPlace[0] + "]");
 
         return sb.toString();
     }
@@ -103,6 +107,24 @@ public class Route3 {
             list.add(route[i].latLng);
         }
         return list;
+    }
+
+    public String getNamesOfTheRoute(){
+
+        List<String> list = new ArrayList<>();
+        String[] firstAndLastPlace = null;
+
+
+        for (int i = 0; i < route.length; i++) {
+
+            String[] shortNames = route[i].name.split("-");
+            firstAndLastPlace = route[0].name.split("-");
+            list.add(" " + "-" + route[i] + "-" + "[" + shortNames[0] + "]");
+        }
+
+        list.add(" " + "-0-" + "[" + firstAndLastPlace[0] + "]");
+
+        return list.toString();
     }
 
 

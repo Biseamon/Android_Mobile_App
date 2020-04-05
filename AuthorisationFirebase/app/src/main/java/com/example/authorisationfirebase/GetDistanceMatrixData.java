@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -38,7 +39,9 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
     private String nearbyPlacesUrl;     //nearby Places API.
     public String distanceMatrixUrl;   //distance matrix API link.
     private String finalUrl;          //final end API link sent to onPostExecute method.
+    private LatLng currentLoc;
 
+    GetDirectionsData getDirectionsData = new GetDirectionsData();
 
     public GetDistanceMatrixData(TextView txtView) {
         this.textView = txtView;
@@ -54,6 +57,7 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
 
         mMap = (GoogleMap) objects[0];           //map initialisation from the MapsActivity.class
         nearbyPlacesUrl = (String) objects[1];  //link to Places API from MapsActivity.class
+        currentLoc = (LatLng) objects[2];
 
         DownloadUrl downloadURL = new DownloadUrl();  //initialising the downloadUrl.class
         try {
@@ -61,11 +65,8 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
             Parser parser = new Parser();                                    //initialise a new parser.
             nearbyPlaceList = parser.parseDirectionData(googlePlacesData);  //parses the data from the JSON file into nearbyPlaceList.
 
-           // String origins = getOrigins(); //stores all the origin places.
-
-            String destinations = getDestinations();  //stores all the destination places.
-
-            distanceMatrixUrl = getDistanceMatrix(getOrigins(), getDestinations());            //distance matrix API link.
+            distanceMatrixUrl = getDistanceMatrix(getOrigins()
+                    , getDestinations());   //distance matrix API link.
             Log.d("distMatrix", "doInBackground: " + distanceMatrixUrl);  //Test/check the result.
 
             DownloadUrl downloadUrl1 = new DownloadUrl(); //initialise a new downloadUrl object.
@@ -145,27 +146,51 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
 
         System.out.println(listOfLats.toString());
         System.out.println(doubles.get(0));
+        System.out.println(getDirectionsData.getCurrentLocation());
 
         MarkerOptions markerOptions = new MarkerOptions();
         PolylineOptions polylineOptions = new PolylineOptions();
         mMap.clear();
 
+        /**
+         * The best option so far
+         */
         TSP tsp = new TSP();
         tsp.main(listOfLats,placesOrigins, placeDistances, placeDurations);
 
         updateTxt(tsp.getDetailsGA());
 
         for (int i = 0; i < tsp.getRouteLatLng().size(); i++) {
-            mMap.addMarker(markerOptions.position(tsp.getRouteLatLng().get(i)).title("test" + i));
+            mMap.addMarker(markerOptions.position(tsp.getRouteLatLng().get(i)).title("No#" + i));
+
             polylineOptions.addAll(tsp.getRouteLatLng());
             mMap.addPolyline(polylineOptions);
         }
 
+        mMap.addMarker(markerOptions.position(tsp.getRouteLatLng().get(0)).title("Current Location")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
         //Log.d("origins", "onPostExecute: " + placesOrigins.toString());
 
-        Log.d("origins", "onPostExecute: " + getOrigins());
-        Log.d("routes", "onPostExecute: " + tsp.getRoute());
+       // Log.d("origins", "onPostExecute: " + getOrigins());
+        //Log.d("routes", "onPostExecute: " + tsp.getRoute());
 
+
+        /**
+         * Another TSP1 test
+         */
+//        int startingIndex = 0;
+//
+//        TSP1 tsp1 = new TSP1();
+//        tsp1.main(listOfLats,placesOrigins, placeDistances,placeDurations,startingIndex);
+
+//        updateTxt(tsp1.getDetailsGA());
+//        Log.d("routes", " " + tsp1.getRoute());
+//
+//        for (int i = 0; i < tsp1.getRouteLatLng().size(); i++) {
+//            mMap.addMarker(markerOptions.position(tsp1.getRouteLatLng().get(i)).title("No#" + i));
+//            polylineOptions.addAll(tsp1.getRouteLatLng());
+//            mMap.addPolyline(polylineOptions);
+//        }
     }
 
     //Updates the textView field.
@@ -180,15 +205,25 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
     public String getOrigins(){
         List<String> list = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 9; i++) {
             list.add(nearbyPlaceList.get(i).toString());
 
         }
+
+        //list.remove(0);
+        list.add(0, currentLoc.toString()
+                .replace("lat/lng:","")
+                .replace("(","")
+                .replace(")","")
+                .replace(" ","")
+                .replace(",","?"));
+
 
         return list.toString().replace("{","")
                 .replace("}","")
                 .replace(",","|")
                 .replace("!",",")
+                .replace("?",",")
                 .replace(" ","")
                 .replace("latLngs=","");
     }
@@ -198,11 +233,21 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
      * @return
      */
     public String getDestinations(){
-        List<Map<String, String>> list = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < 9; i++) {
 
-            list.add(nearbyPlaceList.get(i));
+            list.add(nearbyPlaceList.get(i).toString());
         }
+
+        //list.remove(0);
+        list.add(0, currentLoc.toString()
+                .replace("lat/lng:","")
+                .replace("(","")
+                .replace(")","")
+                .replace(" ","")
+                .replace(",","?"));
+
+
         return list.toString().replace("[", "")
                 .replace("]", "")
                 .replace("{", "")
@@ -211,6 +256,7 @@ public class GetDistanceMatrixData extends AsyncTask<Object,String,String> {
                 .replace(" ", "")
                 .replace(",", "|")
                 .replace("!", ",")
+                .replace("?", ",")
                 .replace("latLngs:", "");
     }
 
