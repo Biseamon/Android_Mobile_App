@@ -1,4 +1,4 @@
-# AuthorisationFirebase
+# Android_Mobile_App
 ## Mobile App
 The idea is to build an app that takes through a list of desired places using genetic algorithm.
 The GA is intended to show the shortest path and time from one place to another.
